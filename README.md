@@ -12,15 +12,31 @@ Built with **Next.js (Pages Router) + TypeScript**, a **PostgreSQL** database vi
 
 A glassmorphism UI with an animated aurora backdrop, Space Grotesk display type, and fluid motion.
 
+### Home
+
 ![Home page](docs/screenshots/01-home.png)
 
-| Login / Sign-up | Event detail: campus, safety & payment info |
+### Login & event detail
+
+| Login / Sign-up (ID-verified) | Event detail: campus, safety & organiser payment |
 |---|---|
 | ![Login](docs/screenshots/05-login.png) | ![Event detail](docs/screenshots/02-event-detail.png) |
 
-| Admin: create event (full organiser form) | User Agreement / rules |
+### Student profile & checkout
+
+| Profile: MyCSD points & event history | Payment checkout (simulated) |
 |---|---|
-| ![Admin create event](docs/screenshots/03-admin-create-event.png) | ![User Agreement](docs/screenshots/04-user-agreement.png) |
+| ![Profile](docs/screenshots/06-profile.png) | ![Payment](docs/screenshots/07-payment.png) |
+
+### Admin tools
+
+| Create event (full organiser form) | User & email moderation |
+|---|---|
+| ![Admin create event](docs/screenshots/03-admin-create-event.png) | ![Admin moderation](docs/screenshots/08-admin-moderation.png) |
+
+### User Agreement
+
+![User Agreement](docs/screenshots/04-user-agreement.png)
 
 > Screenshots are generated from the seeded demo data with `node scripts/screenshots.js` (Puppeteer) while the app runs locally.
 

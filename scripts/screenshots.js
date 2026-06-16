@@ -13,6 +13,25 @@ const BASE = process.env.BASE_URL || "http://localhost:3000";
 const OUT = "docs/screenshots";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
+async function login(page, email, password) {
+  await page.goto(`${BASE}/register`, { waitUntil: "networkidle0" });
+  // Clear any pre-filled values, then sign in. Submitting new credentials
+  // overwrites the existing NextAuth session cookie.
+  await page.evaluate(() => {
+    document.querySelectorAll("input").forEach((i) => (i.value = ""));
+  });
+  await page.type("input[name=email]", email);
+  await page.type("input[name=password]", password);
+  await Promise.all([
+    page.waitForNavigation({ waitUntil: "networkidle0" }).catch(() => {}),
+    page.click("button[type=submit]"),
+  ]);
+  await page
+    .waitForFunction(() => location.pathname === "/home", { timeout: 15000 })
+    .catch(() => {});
+  await sleep(1200);
+}
+
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const browser = await puppeteer.launch({
@@ -22,21 +41,30 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const page = await browser.newPage();
   await page.setViewport({ width: 1280, height: 900, deviceScaleFactor: 2 });
 
-  // --- Log in as the admin so every page is reachable ---
+  // ---- Login page (before signing in) ----
   await page.goto(`${BASE}/register`, { waitUntil: "networkidle0" });
   await sleep(900);
   await page.screenshot({ path: `${OUT}/05-login.png` });
   console.log("captured login");
-  await page.type("input[name=email]", "admin@usm.my");
-  await page.type("input[name=password]", "admin123");
-  await Promise.all([
-    page.waitForNavigation({ waitUntil: "networkidle0" }).catch(() => {}),
-    page.click("button[type=submit]"),
-  ]);
-  await page
-    .waitForFunction(() => location.pathname === "/home", { timeout: 15000 })
-    .catch(() => {});
-  await sleep(1500);
+
+  // ---- Student view: profile + payment ----
+  await login(page, "noormohammadsowan@student.usm.my", "student123");
+
+  await page.goto(`${BASE}/profile`, { waitUntil: "networkidle0" });
+  await sleep(900);
+  await page.screenshot({ path: `${OUT}/06-profile.png`, fullPage: true });
+  console.log("captured profile");
+
+  await page.goto(
+    `${BASE}/payment?amount=25&description=${encodeURIComponent("Career Fair 2026 Ticket")}`,
+    { waitUntil: "networkidle0" }
+  );
+  await sleep(900);
+  await page.screenshot({ path: `${OUT}/07-payment.png`, fullPage: true });
+  console.log("captured payment");
+
+  // ---- Admin view ----
+  await login(page, "admin@usm.my", "admin123");
 
   // 1. Home: upcoming & past events
   await page.goto(`${BASE}/home`, { waitUntil: "networkidle0" });
@@ -44,7 +72,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   await page.screenshot({ path: `${OUT}/01-home.png` });
   console.log("captured home");
 
-  // 2. Event detail: campus/safety/cultural info
+  // 2. Event detail: campus/safety/cultural + external payment info
   const events = await page.evaluate(async () => {
     const r = await fetch("/api/events?type=upcoming");
     const d = await r.json();
@@ -74,6 +102,13 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     },
   });
   console.log("captured admin");
+
+  // 8. Admin: user & email moderation panel
+  const mod = await page.$("#moderation");
+  await mod.evaluate((el) => el.scrollIntoView());
+  await sleep(600);
+  await mod.screenshot({ path: `${OUT}/08-admin-moderation.png` });
+  console.log("captured moderation");
 
   // 4. User Agreement
   await page.goto(`${BASE}/terms`, { waitUntil: "networkidle0" });

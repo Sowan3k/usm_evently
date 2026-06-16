@@ -752,7 +752,7 @@ export default function AdminDashboard({
         </Card>
 
         {/* User moderation */}
-        <Card className="p-6 bg-white shadow-lg">
+        <Card id="moderation" className="p-6 bg-white shadow-lg scroll-mt-20">
           <CardHeader className="p-0 mb-4">
             <CardTitle className="text-xl text-usmPurple">
               Users &amp; Moderation
