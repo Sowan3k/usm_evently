@@ -140,6 +140,14 @@ export default function EventDetails({
   return (
     <div className="aurora-bg relative min-h-screen flex flex-col">
       <div className="pointer-events-none absolute -left-32 top-24 h-96 w-96 rounded-full bg-brand-violet/25 blur-3xl animate-float" />
+      <div
+        className="pointer-events-none absolute -right-28 top-1/2 h-80 w-80 rounded-full bg-brand-cyan/15 blur-3xl animate-float"
+        style={{ animationDelay: "2s" }}
+      />
+      <div
+        className="pointer-events-none absolute -left-20 bottom-10 h-80 w-80 rounded-full bg-brand-fuchsia/20 blur-3xl animate-float"
+        style={{ animationDelay: "4s" }}
+      />
       <Header />
       <main className="relative z-10 flex-grow p-4 sm:p-8">
         <div className="container mx-auto max-w-3xl">

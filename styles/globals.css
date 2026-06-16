@@ -54,12 +54,15 @@ h1, h2, h3, h4, .font-display {
   .aurora-bg {
     position: relative;
     background-color: #0a0612;
+    /* Radial glows on top of a soft vertical base gradient so the "empty"
+       areas read as deep violet rather than a flat black band. */
     background-image:
-      radial-gradient(at 18% 18%, rgba(124, 58, 237, 0.38) 0px, transparent 50%),
-      radial-gradient(at 82% 12%, rgba(34, 211, 238, 0.20) 0px, transparent 45%),
-      radial-gradient(at 75% 82%, rgba(192, 38, 211, 0.30) 0px, transparent 50%),
-      radial-gradient(at 8% 85%, rgba(99, 102, 241, 0.28) 0px, transparent 50%);
-    background-attachment: fixed;
+      radial-gradient(at 18% 12%, rgba(124, 58, 237, 0.40) 0px, transparent 55%),
+      radial-gradient(at 82% 8%, rgba(34, 211, 238, 0.22) 0px, transparent 50%),
+      radial-gradient(at 78% 70%, rgba(192, 38, 211, 0.30) 0px, transparent 55%),
+      radial-gradient(at 12% 88%, rgba(99, 102, 241, 0.30) 0px, transparent 55%),
+      radial-gradient(at 50% 50%, rgba(76, 29, 149, 0.22) 0px, transparent 70%),
+      linear-gradient(180deg, #140a26 0%, #0c0718 45%, #150b28 100%);
   }
 
   /* Translucent frosted-glass surface */
