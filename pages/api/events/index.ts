@@ -31,6 +31,13 @@ export default async function handler(
     const session = await requireAdmin(req, res);
     if (!session) return;
 
+    // The organizer must accept the User Agreement to publish an event.
+    if (req.body?.agreedToTerms !== true) {
+      return res.status(400).json({
+        error: "You must accept the USM Evently Organizer Agreement",
+      });
+    }
+
     const parsed = eventSchema.safeParse(req.body);
     if (!parsed.success) {
       return res

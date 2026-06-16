@@ -21,6 +21,16 @@ export default async function handler(
   const { name, email, password } = parsed.data;
   const normalizedEmail = email.toLowerCase().trim();
 
+  // Reject sign-ups from addresses an admin has blocked.
+  const banned = await prisma.blockedEmail.findUnique({
+    where: { email: normalizedEmail },
+  });
+  if (banned) {
+    return res
+      .status(403)
+      .json({ error: "This email has been blocked by an administrator." });
+  }
+
   const existing = await prisma.user.findUnique({
     where: { email: normalizedEmail },
   });

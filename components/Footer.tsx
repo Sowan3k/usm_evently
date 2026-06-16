@@ -51,6 +51,9 @@ export default function Footer() {
           <Link href="/payment" className="hover:text-gold">
             Payment
           </Link>
+          <Link href="/terms" className="hover:text-gold">
+            User Agreement
+          </Link>
         </div>
 
         {/* Contact Information */}

@@ -28,19 +28,30 @@ enum PaymentStatus {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  name         String
-  email        String   @unique
-  passwordHash String
-  phone        String?
-  avatarUrl    String?
-  myCSDPoints  Int      @default(0)
-  role         Role     @default(STUDENT)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id            String   @id @default(cuid())
+  name          String
+  email         String   @unique
+  passwordHash  String
+  phone         String?
+  avatarUrl     String?
+  myCSDPoints   Int      @default(0)
+  role          Role     @default(STUDENT)
+  blocked       Boolean  @default(false)
+  blockedReason String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 
   registrations Registration[]
   payments      Payment[]
+}
+
+/// Emails an admin has banned from the platform. Checked at both
+/// registration and login so a blocked account (or address) cannot return.
+model BlockedEmail {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  reason    String?
+  createdAt DateTime @default(now())
 }
 
 model Event {
@@ -51,13 +62,25 @@ model Event {
   startTime   String?
   endTime     String?
   location    String
-  imageUrl    String?
-  category    String?
-  capacity    Int?
-  price       Float    @default(0)
-  csdPoints   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  campus      String // Main / Engineering / Health campus of USM
+  school      String? // Organising school or faculty
+  organizer   String? // Organising club, society, or department
+
+  // Visitor policy & safety
+  openToPublic     Boolean @default(false) // are outsiders (non-USM) allowed?
+  dressCode        String? // required attire, if any
+  culturalNotes    String? // etiquette / cultural rules visitors must observe
+  emergencyContact String // organizer emergency helpline (required)
+
+  imageUrl  String?
+  posterUrl String? // uploaded event poster (JPG/PNG, stored as a data URL)
+  category  String?
+  capacity  Int?
+  price     Float   @default(0)
+  csdPoints Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   registrations Registration[]
   payments      Payment[]

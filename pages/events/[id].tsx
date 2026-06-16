@@ -170,11 +170,72 @@ export default function EventDetails({
               <p className="text-md text-gray-600 mb-2">
                 <strong>Location:</strong> {event.location}
               </p>
-              <p className="text-md text-gray-600 mb-4">
-                <strong>Price:</strong>{" "}
-                {event.price > 0 ? `RM ${event.price.toFixed(2)}` : "Free"}
+              <p className="text-md text-gray-600 mb-2">
+                <strong>Campus:</strong> {event.campus}
               </p>
-              <p className="text-gray-700 mb-6">{event.description}</p>
+              {event.school && (
+                <p className="text-md text-gray-600 mb-2">
+                  <strong>Organising School:</strong> {event.school}
+                </p>
+              )}
+              {event.organizer && (
+                <p className="text-md text-gray-600 mb-2">
+                  <strong>Organiser:</strong> {event.organizer}
+                </p>
+              )}
+              <p className="text-md text-gray-600 mb-2">
+                <strong>Entry:</strong>{" "}
+                {event.price > 0 ? `RM ${event.price.toFixed(2)}` : "Free"} ·{" "}
+                {event.openToPublic
+                  ? "Open to the public (outsiders welcome)"
+                  : "USM students & staff only"}
+              </p>
+              {event.dressCode && (
+                <p className="text-md text-gray-600 mb-2">
+                  <strong>Dress code:</strong> {event.dressCode}
+                </p>
+              )}
+              <p className="text-gray-700 my-6">{event.description}</p>
+
+              {event.culturalNotes && (
+                <div className="mb-4 rounded-md border-l-4 border-usmPurple bg-purple-50 p-4">
+                  <p className="text-sm font-semibold text-usmPurple">
+                    Cultural &amp; etiquette notes
+                  </p>
+                  <p className="text-sm text-gray-700">{event.culturalNotes}</p>
+                </div>
+              )}
+
+              <div className="mb-6 rounded-md border-l-4 border-red-500 bg-red-50 p-4">
+                <p className="text-sm font-semibold text-red-700">
+                  Emergency helpline
+                </p>
+                <p className="text-sm text-gray-700">
+                  In case of emergency during this event, contact the organiser
+                  at{" "}
+                  <a
+                    href={`tel:${event.emergencyContact.replace(/\s+/g, "")}`}
+                    className="font-semibold underline"
+                  >
+                    {event.emergencyContact}
+                  </a>
+                  .
+                </p>
+              </div>
+
+              {event.posterUrl && (
+                <div className="mb-6">
+                  <p className="text-sm font-semibold text-gray-600 mb-2">
+                    Event poster
+                  </p>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={event.posterUrl}
+                    alt={`${event.title} poster`}
+                    className="max-h-96 w-auto rounded-lg border shadow"
+                  />
+                </div>
+              )}
 
               {message && (
                 <p className="mb-4 text-sm font-medium text-usmPurple">

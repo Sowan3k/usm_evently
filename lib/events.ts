@@ -8,7 +8,15 @@ export type SerializedEvent = {
   startTime: string | null;
   endTime: string | null;
   location: string;
+  campus: string;
+  school: string | null;
+  organizer: string | null;
+  openToPublic: boolean;
+  dressCode: string | null;
+  culturalNotes: string | null;
+  emergencyContact: string;
   imageUrl: string | null;
+  posterUrl: string | null;
   category: string | null;
   capacity: number | null;
   price: number;
@@ -29,7 +37,15 @@ export function serializeEvent(event: Event): SerializedEvent {
     startTime: event.startTime,
     endTime: event.endTime,
     location: event.location,
+    campus: event.campus,
+    school: event.school,
+    organizer: event.organizer,
+    openToPublic: event.openToPublic,
+    dressCode: event.dressCode,
+    culturalNotes: event.culturalNotes,
+    emergencyContact: event.emergencyContact,
     imageUrl: event.imageUrl,
+    posterUrl: event.posterUrl,
     category: event.category,
     capacity: event.capacity,
     price: event.price,

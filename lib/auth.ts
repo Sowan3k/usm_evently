@@ -20,11 +20,20 @@ export const authOptions: NextAuthOptions = {
           return null;
         }
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email.toLowerCase().trim() },
-        });
+        const email = credentials.email.toLowerCase().trim();
+
+        const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
           return null;
+        }
+
+        // Blocked accounts (or addresses an admin has banned) cannot sign in.
+        if (user.blocked) {
+          throw new Error("This account has been blocked by an administrator.");
+        }
+        const banned = await prisma.blockedEmail.findUnique({ where: { email } });
+        if (banned) {
+          throw new Error("This email has been blocked by an administrator.");
         }
 
         const isValid = await bcrypt.compare(

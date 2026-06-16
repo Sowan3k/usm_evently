@@ -50,6 +50,14 @@ async function main() {
     prisma.event.create({
       data: {
         title: "Orientation 2026",
+        campus: "Main Campus (Minden, Penang)",
+        school: "Other / Inter-school",
+        organizer: "USM Student Affairs & Development Division",
+        openToPublic: false,
+        dressCode: "Smart casual; covered shoes required",
+        culturalNotes:
+          "Modest attire is appreciated. Please switch phones to silent during briefings.",
+        emergencyContact: "+60 4-653 5000",
         description:
           "Welcome to USM! Join the official orientation programme to meet faculty, tour the campus, and connect with fellow new students. A full day of activities, ice-breakers, and essential briefings to kick-start your university journey.",
         date: daysFromNow(14),
@@ -66,6 +74,12 @@ async function main() {
     prisma.event.create({
       data: {
         title: "USM Open Day",
+        campus: "Engineering Campus (Nibong Tebal)",
+        school: "Other / Inter-school",
+        organizer: "USM Corporate & Sustainable Development Division",
+        openToPublic: true,
+        dressCode: "Casual",
+        emergencyContact: "+60 4-599 5000",
         description:
           "Explore everything USM has to offer. Visit faculty booths, research showcases, student clubs, and sports facilities. Open to prospective students, parents, and the public.",
         date: daysFromNow(21),
@@ -82,6 +96,14 @@ async function main() {
     prisma.event.create({
       data: {
         title: "Career Fair 2026",
+        campus: "Main Campus (Minden, Penang)",
+        school: "School of Management",
+        organizer: "USM Career & Counselling Unit",
+        openToPublic: true,
+        dressCode: "Formal / business attire",
+        culturalNotes:
+          "Bring printed copies of your resume. Booth queues are first-come, first-served.",
+        emergencyContact: "+60 4-653 4444",
         description:
           "Meet top employers and recruiters from across Malaysia. Bring your resume, attend on-the-spot interviews, and join career-readiness workshops. A premium event with a registration fee that includes lunch and a workshop pass.",
         date: daysFromNow(35),
@@ -101,6 +123,12 @@ async function main() {
     prisma.event.create({
       data: {
         title: "Convocation 2022",
+        campus: "Main Campus (Minden, Penang)",
+        school: "Other / Inter-school",
+        organizer: "USM Academic Management Division",
+        openToPublic: true,
+        dressCode: "Formal; graduation robes for graduands",
+        emergencyContact: "+60 4-653 3888",
         description:
           "USM's annual convocation ceremony celebrating the achievements of graduating students across all faculties. A proud milestone for graduates and their families.",
         date: daysFromNow(-540),
@@ -115,6 +143,12 @@ async function main() {
     prisma.event.create({
       data: {
         title: "Sports Day 2023",
+        campus: "Main Campus (Minden, Penang)",
+        school: "Other / Inter-school",
+        organizer: "USM Sports & Recreation Centre",
+        openToPublic: false,
+        dressCode: "Sports attire",
+        emergencyContact: "+60 4-653 3777",
         description:
           "A day of friendly inter-faculty competition featuring track and field, futsal, and team games. Cheer on your faculty and earn CSD points for participation.",
         date: daysFromNow(-380),
@@ -129,6 +163,12 @@ async function main() {
     prisma.event.create({
       data: {
         title: "Science Expo",
+        campus: "Main Campus (Minden, Penang)",
+        school: "School of Physics",
+        organizer: "USM School of Physics",
+        openToPublic: true,
+        dressCode: "Smart casual",
+        emergencyContact: "+60 4-653 3650",
         description:
           "A showcase of student and faculty research, innovation projects, and interactive STEM demonstrations. Highlighting the best of USM's scientific community.",
         date: daysFromNow(-200),

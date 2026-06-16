@@ -4,6 +4,22 @@ A full-stack campus events platform for **Universiti Sains Malaysia (USM)** stud
 
 Built with **Next.js (Pages Router) + TypeScript**, a **PostgreSQL** database via **Prisma**, and authentication with **NextAuth**.
 
+> 📣 **Looking for collaborators!** This is an open student project for the USM community. See [Contributing](#contributing) below — beginners welcome.
+
+---
+
+## Screenshots
+
+| Home — upcoming & past events | Event detail — campus, safety & cultural info |
+|---|---|
+| ![Home page](docs/screenshots/01-home.png) | ![Event detail](docs/screenshots/02-event-detail.png) |
+
+| Admin — create event (full organiser form) | User Agreement / rules |
+|---|---|
+| ![Admin create event](docs/screenshots/03-admin-create-event.png) | ![User Agreement](docs/screenshots/04-user-agreement.png) |
+
+> Screenshots are generated from the seeded demo data with `node scripts/screenshots.js` (Puppeteer) while the app runs locally.
+
 ---
 
 ## Features
@@ -17,9 +33,18 @@ Built with **Next.js (Pages Router) + TypeScript**, a **PostgreSQL** database vi
 - 📅 **Add to Calendar** — generates a downloadable `.ics` file for any event
 - 🔗 **Share Event** — uses the Web Share API with a clipboard fallback
 
-**For admins**
+**For event organisers / admins**
 - 🛠️ Protected admin dashboard to **create, edit, and delete** events (full CRUD)
+- 📋 Rich event form capturing everything attendees need to know:
+  - Organising **school / faculty** and **USM campus** (Main / Engineering / Health)
+  - **Free for all vs. ticketed**, and whether **outsiders (non-USM) are allowed**
+  - **Dress code** and **cultural / etiquette notes** visitors must observe
+  - A required **organiser emergency helpline**
+  - **Poster upload** (JPG/PNG, max 5 MB) with client- & server-side validation
+  - A required **Organizer Agreement** checkbox before publishing
 - 👮 Role-based access control — admin routes & actions are blocked for students (403)
+- 🚫 **Moderation tools** — block/unblock any user, or ban any email address (e.g. Gmail) so it can neither sign in nor register
+- 📜 Public **User Agreement** (`/terms`) — admins may delete any rule-violating event and block any user or email
 
 ---
 
@@ -48,25 +73,31 @@ pages/
   events/[id].tsx        # Event detail + RSVP + calendar/share
   profile.tsx            # User profile + registration history
   payment.tsx            # Simulated checkout
-  admin/index.tsx        # Admin-only event CRUD dashboard
+  terms.tsx              # Public User Agreement / rules
+  admin/index.tsx        # Admin event CRUD + user/email moderation
   api/
     auth/[...nextauth].ts  # NextAuth handler
-    auth/register.ts       # Sign-up endpoint
+    auth/register.ts       # Sign-up endpoint (rejects blocked emails)
     events/                # Events CRUD (GET public, POST/PUT/DELETE admin)
     registrations/         # RSVP / cancel / list mine
     profile.ts             # Update profile
     payments.ts            # Record a payment
+    admin/users.ts         # List users, block/unblock
+    admin/blocked-emails.ts# List/add/remove banned email addresses
 lib/
   prisma.ts              # PrismaClient singleton
-  auth.ts                # NextAuth options
+  auth.ts                # NextAuth options (blocks banned accounts/emails)
   api-auth.ts            # requireAuth / requireAdmin guards (API)
   page-auth.ts           # SSR auth/redirect helpers (pages)
   validations.ts         # Zod schemas
   events.ts              # Event serialization + date formatting
   calendar.ts            # .ics generation
+  constants.ts           # USM campuses & schools reference data
 prisma/
-  schema.prisma          # User, Event, Registration, Payment models
+  schema.prisma          # User, BlockedEmail, Event, Registration, Payment
   seed.ts                # Demo data
+scripts/
+  screenshots.js         # Puppeteer README screenshot capture
 ```
 
 Pages read data directly through Prisma in `getServerSideProps` (server-rendered), while all mutations go through validated API routes guarded by `requireAuth` / `requireAdmin`.
@@ -156,7 +187,30 @@ It installs dependencies on first run, creates a `.env` from `.env.example` if o
 
 ---
 
+## Contributing
+
+Contributions from the USM community (and anyone else) are very welcome — this is a friendly project to learn full-stack development on.
+
+1. **Fork** the repo and clone your fork.
+2. Follow [Getting Started](#getting-started) to run it locally (or just run `start.bat` on Windows).
+3. Create a branch: `git checkout -b feature/your-idea`.
+4. Make your change and run `npm run build` to make sure it compiles.
+5. Commit, push to your fork, and open a **Pull Request** describing what you changed.
+
+**Good first issues / ideas:**
+- Replace the data-URL poster storage with object storage (e.g. Vercel Blob / S3)
+- Real email verification on sign-up
+- Event search & category filters on the home page
+- A "my registrations" / ticket QR page
+- Map embed on the event detail page
+- Unit/integration tests
+
+Not sure where to start? Open an issue and say hi. 🙂
+
+---
+
 ## Notes
 
 - The payment flow is a **simulation** — no real card is charged and raw card numbers are never stored. The payment record (amount, description, event) is persisted to demonstrate the data model. Swapping in a real provider (e.g. Stripe) would only touch `pages/payment.tsx` and `pages/api/payments.ts`.
 - MyCSD points reflect USM's Co-curriculum & Soft-skill Development scheme; events carry point values that could be awarded on attendance.
+- Event **posters** are validated (JPG/PNG, ≤ 5 MB) and currently stored as base64 data URLs in the database to keep setup zero-config. For production scale, swap this for object storage (Vercel Blob / S3) — a great [first contribution](#contributing).
