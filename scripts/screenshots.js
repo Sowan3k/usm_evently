@@ -24,6 +24,9 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
   // --- Log in as the admin so every page is reachable ---
   await page.goto(`${BASE}/register`, { waitUntil: "networkidle0" });
+  await sleep(900);
+  await page.screenshot({ path: `${OUT}/05-login.png` });
+  console.log("captured login");
   await page.type("input[name=email]", "admin@usm.my");
   await page.type("input[name=password]", "admin123");
   await Promise.all([

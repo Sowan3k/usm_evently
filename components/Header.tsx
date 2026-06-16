@@ -6,25 +6,14 @@ export default function Header() {
   const router = useRouter();
   const { data: session } = useSession();
 
-  // Dynamic Header Styles Based on Page
-  const headerStyles: Record<string, string> = {
-    "/home": "bg-usmPurple text-white",
-    "/profile": "bg-gold text-usmPurple",
-    "/payment": "bg-yellow-500 text-black",
-    "/admin": "bg-gray-900 text-white",
-  };
-
-  const currentStyle =
-    headerStyles[router.pathname] || "bg-usmPurple text-white";
-
   const handleLogout = () => {
-    signOut({ callbackUrl: "/register" });
+    signOut({ callbackUrl: "/home" });
   };
 
-  const NavButton = ({ href, label }: { href: string; label: string }) => (
+  const NavLink = ({ href, label }: { href: string; label: string }) => (
     <Link
       href={href}
-      className="px-4 py-2 bg-white text-usmPurple font-semibold rounded-lg shadow hover:bg-gray-200"
+      className="px-3 py-2 text-sm font-medium text-white/80 rounded-lg transition-colors hover:text-white hover:bg-white/10"
     >
       {label}
     </Link>
@@ -34,55 +23,54 @@ export default function Header() {
   const isAuthPage = router.pathname === "/register";
 
   return (
-    <header className={`${currentStyle} p-4 shadow-md bg-opacity-50`}>
-      <div className="container mx-auto flex justify-between items-center">
+    <header className="sticky top-0 z-50 glass-strong border-b border-white/10">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
         {/* Logo and App Name */}
-        <div className="flex items-center">
-          <Link href={session ? "/home" : "/register"}>
-            <img
-              src="/usm-logo.png"
-              alt="USM Logo"
-              className="h-10 w-auto mr-4 cursor-pointer"
-            />
-          </Link>
-          <h1 className="text-xl font-extrabold">USM Evently</h1>
-        </div>
+        <Link
+          href={session ? "/home" : "/home"}
+          className="flex items-center gap-3 group"
+        >
+          <img
+            src="/usm-logo.png"
+            alt="USM Logo"
+            className="h-9 w-auto transition-transform duration-300 group-hover:scale-105"
+          />
+          <span className="font-display text-lg font-bold tracking-tight gradient-text">
+            USM Evently
+          </span>
+        </Link>
 
-        {/* Page-Specific / Auth-aware Buttons */}
-        {!isAuthPage && session && (
-          <div className="flex items-center space-x-4">
+        {/* Auth-aware navigation */}
+        {!isAuthPage && (
+          <nav className="flex items-center gap-1 sm:gap-2">
             {router.pathname !== "/home" && (
-              <NavButton href="/home" label="Home" />
+              <NavLink href="/home" label="Home" />
             )}
-            {router.pathname !== "/profile" && (
-              <NavButton href="/profile" label="Profile" />
+            {session ? (
+              <>
+                {router.pathname !== "/profile" && (
+                  <NavLink href="/profile" label="Profile" />
+                )}
+                {session.user.role === "ADMIN" &&
+                  router.pathname !== "/admin" && (
+                    <NavLink href="/admin" label="Admin" />
+                  )}
+                <button
+                  onClick={handleLogout}
+                  className="ml-1 px-4 py-2 text-sm font-semibold text-white rounded-xl bg-white/10 border border-white/15 backdrop-blur transition-all hover:bg-white/20 hover:-translate-y-0.5"
+                >
+                  Log out
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/register"
+                className="ml-1 px-4 py-2 text-sm font-semibold text-white rounded-xl bg-gradient-to-r from-brand-violet to-brand-indigo shadow-glow transition-all hover:-translate-y-0.5 hover:brightness-110"
+              >
+                Log in / Sign up
+              </Link>
             )}
-            {session.user.role === "ADMIN" &&
-              router.pathname !== "/admin" && (
-                <NavButton href="/admin" label="Admin" />
-              )}
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg shadow hover:bg-red-600"
-            >
-              Log out
-            </button>
-          </div>
-        )}
-
-        {/* Visitors who aren't signed in can still browse events. */}
-        {!isAuthPage && !session && (
-          <div className="flex items-center space-x-4">
-            {router.pathname !== "/home" && (
-              <NavButton href="/home" label="Home" />
-            )}
-            <Link
-              href="/register"
-              className="px-4 py-2 bg-gold text-usmPurple font-semibold rounded-lg shadow hover:bg-yellow-400"
-            >
-              Log in / Sign up
-            </Link>
-          </div>
+          </nav>
         )}
       </div>
     </header>

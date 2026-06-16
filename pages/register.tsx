@@ -1,6 +1,7 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
+import { motion } from "framer-motion";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
@@ -70,132 +71,146 @@ export default function Register() {
     }
   };
 
+  const inputClass =
+    "w-full rounded-xl border border-white/15 bg-white/5 px-4 py-2.5 text-white placeholder-white/40 outline-none transition-all focus:border-brand-violet/60 focus:bg-white/10 focus:ring-2 focus:ring-brand-violet/40";
+
   return (
-    <div>
-      <Header />
-
+    <div className="aurora-bg relative min-h-screen overflow-hidden">
+      <div className="pointer-events-none absolute -left-32 top-10 h-96 w-96 rounded-full bg-brand-violet/30 blur-3xl animate-float" />
       <div
-        className="flex items-center justify-center min-h-screen"
-        style={{
-          backgroundImage: "url('/background-image.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-        }}
-      >
-        <div className="bg-white bg-opacity-90 rounded-lg shadow-2xl p-10 max-w-md w-full">
-          <div className="flex flex-col items-center">
-            <img src="/usm-logo.png" alt="USM Logo" className="h-16 mb-4" />
-            <h1 className="text-3xl font-bold text-yellow-600 mb-1">
-              USM Evently
-            </h1>
-            <p className="text-sm text-gray-600 mb-6">
-              {mode === "login"
-                ? "Sign in to continue"
-                : "Create your student account"}
-            </p>
+        className="pointer-events-none absolute -right-24 bottom-10 h-80 w-80 rounded-full bg-brand-cyan/20 blur-3xl animate-float"
+        style={{ animationDelay: "3s" }}
+      />
+      <div className="relative z-10 flex flex-col min-h-screen">
+        <Header />
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
-              {mode === "register" && (
-                <>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Full Name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    className="px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                  />
-                  <div className="flex gap-2">
-                    <select
-                      name="identityType"
-                      value={formData.identityType}
-                      onChange={handleChange}
-                      className="px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 bg-white"
-                    >
-                      <option value="MATRIC">Matric No.</option>
-                      <option value="IC">IC</option>
-                      <option value="PASSPORT">Passport</option>
-                    </select>
+        <div className="flex flex-1 items-center justify-center px-4 py-12">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full max-w-md rounded-3xl glass-strong border border-white/10 p-8 shadow-glass-lg sm:p-10"
+          >
+            <div className="flex flex-col items-center">
+              <img src="/usm-logo.png" alt="USM Logo" className="h-14 mb-4" />
+              <h1 className="font-display text-3xl font-bold gradient-text">
+                USM Evently
+              </h1>
+              <p className="mt-2 mb-7 text-sm text-white/60">
+                {mode === "login"
+                  ? "Sign in to continue"
+                  : "Create your USM account"}
+              </p>
+
+              <form
+                onSubmit={handleSubmit}
+                className="flex w-full flex-col gap-4"
+              >
+                {mode === "register" && (
+                  <>
                     <input
                       type="text"
-                      name="identityNumber"
-                      placeholder="Your matric / IC / passport no."
-                      value={formData.identityNumber}
+                      name="name"
+                      placeholder="Full Name"
+                      value={formData.name}
                       onChange={handleChange}
                       required
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                      className={inputClass}
                     />
-                  </div>
-                  <p className="text-xs text-gray-500 -mt-1 px-2">
-                    USM students &amp; staff only. Your ID is used for
-                    verification and is never shown publicly.
-                  </p>
-                </>
-              )}
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
-              <input
-                type="password"
-                name="password"
-                placeholder="Password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                minLength={6}
-                className="px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              />
+                    <div className="flex gap-2">
+                      <select
+                        name="identityType"
+                        value={formData.identityType}
+                        onChange={handleChange}
+                        className="rounded-xl border border-white/15 bg-ink-800 px-3 py-2.5 text-white outline-none focus:border-brand-violet/60 focus:ring-2 focus:ring-brand-violet/40"
+                      >
+                        <option value="MATRIC">Matric No.</option>
+                        <option value="IC">IC</option>
+                        <option value="PASSPORT">Passport</option>
+                      </select>
+                      <input
+                        type="text"
+                        name="identityNumber"
+                        placeholder="Your matric / IC / passport no."
+                        value={formData.identityNumber}
+                        onChange={handleChange}
+                        required
+                        className={`flex-1 ${inputClass}`}
+                      />
+                    </div>
+                    <p className="-mt-1 px-1 text-xs text-white/40">
+                      USM students &amp; staff only. Your ID is used for
+                      verification and is never shown publicly.
+                    </p>
+                  </>
+                )}
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  className={inputClass}
+                />
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  minLength={6}
+                  className={inputClass}
+                />
 
-              {error && (
-                <p className="text-sm text-red-600 text-center">{error}</p>
-              )}
+                {error && (
+                  <p className="rounded-lg bg-red-500/15 px-3 py-2 text-center text-sm text-red-300">
+                    {error}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="mt-1 rounded-xl bg-gradient-to-r from-brand-violet to-brand-indigo px-6 py-3 font-semibold text-white shadow-glow transition-all hover:-translate-y-0.5 hover:brightness-110 disabled:opacity-60"
+                >
+                  {loading
+                    ? "Please wait..."
+                    : mode === "login"
+                      ? "Sign In"
+                      : "Create Account"}
+                </button>
+              </form>
 
               <button
-                type="submit"
-                disabled={loading}
-                className="px-6 py-3 mt-2 text-white bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-lg shadow hover:shadow-lg hover:from-yellow-500 hover:to-yellow-700 disabled:opacity-60"
+                type="button"
+                onClick={() => {
+                  setError(null);
+                  setMode(mode === "login" ? "register" : "login");
+                }}
+                className="mt-5 text-sm text-brand-cyan transition-colors hover:text-white"
               >
-                {loading
-                  ? "Please wait..."
-                  : mode === "login"
-                    ? "Sign In"
-                    : "Create Account"}
+                {mode === "login"
+                  ? "New here? Create an account"
+                  : "Already have an account? Sign in"}
               </button>
-            </form>
 
-            <button
-              type="button"
-              onClick={() => {
-                setError(null);
-                setMode(mode === "login" ? "register" : "login");
-              }}
-              className="mt-5 text-sm text-usmPurple hover:underline"
-            >
-              {mode === "login"
-                ? "New here? Create an account"
-                : "Already have an account? Sign in"}
-            </button>
-
-            {mode === "login" && (
-              <p className="mt-4 text-xs text-gray-500 text-center">
-                Demo login — student:{" "}
-                <span className="font-mono">noormohammadsowan@student.usm.my</span>{" "}
-                / <span className="font-mono">student123</span>
-              </p>
-            )}
-          </div>
+              {mode === "login" && (
+                <p className="mt-4 text-center text-xs text-white/40">
+                  Demo — student:{" "}
+                  <span className="font-mono text-white/60">
+                    noormohammadsowan@student.usm.my
+                  </span>{" "}
+                  / <span className="font-mono text-white/60">student123</span>
+                </p>
+              )}
+            </div>
+          </motion.div>
         </div>
-      </div>
 
-      <Footer />
+        <Footer />
+      </div>
     </div>
   );
 }

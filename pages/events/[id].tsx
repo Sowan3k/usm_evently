@@ -134,15 +134,16 @@ export default function EventDetails({
   };
 
   const headerGradient = event.isPast
-    ? "from-purple-800 to-gold"
-    : "from-green-500 to-blue-500";
+    ? "from-ink-700 via-brand-fuchsia to-brand-violet"
+    : "from-brand-violet via-brand-indigo to-brand-cyan";
 
   return (
-    <div className="relative min-h-screen flex flex-col">
+    <div className="aurora-bg relative min-h-screen flex flex-col">
+      <div className="pointer-events-none absolute -left-32 top-24 h-96 w-96 rounded-full bg-brand-violet/25 blur-3xl animate-float" />
       <Header />
-      <main className="flex-grow p-8 bg-gradient-to-br from-gray-200 to-gray-300">
+      <main className="relative z-10 flex-grow p-4 sm:p-8">
         <div className="container mx-auto max-w-3xl">
-          <Card className="rounded-lg shadow-xl overflow-hidden">
+          <Card className="rounded-3xl shadow-glass-lg overflow-hidden border-white/40 animate-fade-up">
             <img
               src={event.imageUrl ?? "/event1.jpg"}
               alt={event.title}

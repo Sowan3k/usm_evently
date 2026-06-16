@@ -10,9 +10,13 @@ Built with **Next.js (Pages Router) + TypeScript**, a **PostgreSQL** database vi
 
 ## Screenshots
 
-| Home — upcoming & past events | Event detail — campus, safety & cultural info |
+A glassmorphism UI with an animated aurora backdrop, Space Grotesk display type, and fluid motion.
+
+![Home page](docs/screenshots/01-home.png)
+
+| Login / Sign-up | Event detail — campus, safety & payment info |
 |---|---|
-| ![Home page](docs/screenshots/01-home.png) | ![Event detail](docs/screenshots/02-event-detail.png) |
+| ![Login](docs/screenshots/05-login.png) | ![Event detail](docs/screenshots/02-event-detail.png) |
 
 | Admin — create event (full organiser form) | User Agreement / rules |
 |---|---|
