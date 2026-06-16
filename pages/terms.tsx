@@ -14,7 +14,7 @@ export default function Terms() {
         <Card className="p-6 bg-white shadow-lg">
           <CardHeader className="p-0 mb-4">
             <CardTitle className="text-3xl font-bold text-usmPurple">
-              USM Evently — User Agreement
+              USM Evently User Agreement
             </CardTitle>
             <p className="text-sm text-gray-500 mt-1">
               Last updated: June 2026. By creating an account, registering for
@@ -30,7 +30,7 @@ export default function Terms() {
                 USM Evently is a community platform for Universiti Sains
                 Malaysia (USM) students, staff, and approved organisers. To keep
                 the community safe and accountable, every account must register
-                with a valid identification number — your{" "}
+                with a valid identification number, namely your{" "}
                 <strong>matric number, IC, or passport</strong>. This
                 information is used solely for verification and to trace
                 fraudulent activity if necessary; it is never shown publicly.
@@ -117,7 +117,7 @@ export default function Terms() {
                 details are never stored) or the organiser&apos;s own payment
                 details (bank transfer, Touch &apos;n Go, or QR code). When you
                 pay an organiser directly, that transaction is strictly between
-                you and the organiser — verify the details and keep your
+                you and the organiser, so verify the details and keep your
                 receipt. Refunds, where applicable, are handled by the event
                 organiser.
               </p>

@@ -43,7 +43,7 @@ model User {
   myCSDPoints  Int      @default(0)
   role         Role     @default(STUDENT)
 
-  // Identity verification — every account must be a traceable USM student or
+  // Identity verification: every account must be a traceable USM student or
   // staff member (matric no. / IC / passport) so bad actors can be identified.
   identityType   IdentityType?
   identityNumber String?
@@ -91,7 +91,7 @@ model Event {
   price     Float   @default(0)
   csdPoints Int     @default(0)
 
-  // Optional alternative payment — organizers who don't want to use the
+  // Optional alternative payment: organizers who don't want to use the
   // built-in platform checkout can provide their own details instead.
   useExternalPayment  Boolean @default(false)
   bankName            String?

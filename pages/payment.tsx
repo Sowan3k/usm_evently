@@ -88,7 +88,7 @@ export default function Payment() {
           <CardHeader className="p-6 bg-gradient-to-r from-usmPurple to-gold text-white rounded-t-lg">
             <CardTitle className="text-2xl font-bold">Payment Summary</CardTitle>
             <p className="text-sm opacity-90">
-              Simulated checkout — no real card is charged.
+              Simulated checkout. No real card is charged.
             </p>
           </CardHeader>
 

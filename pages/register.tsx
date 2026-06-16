@@ -198,7 +198,7 @@ export default function Register() {
 
               {mode === "login" && (
                 <p className="mt-4 text-center text-xs text-white/40">
-                  Demo — student:{" "}
+                  Demo login, student:{" "}
                   <span className="font-mono text-white/60">
                     noormohammadsowan@student.usm.my
                   </span>{" "}

@@ -159,7 +159,7 @@ export default function Home({ upcoming, past }: HomeProps) {
                 <span className="gradient-text">happening</span> at USM
               </h1>
               <p className="mx-auto mt-5 max-w-xl text-base text-white/60 sm:text-lg">
-                Orientation, career fairs, expos and more — browse, register,
+                Orientation, career fairs, expos and more. Browse, register,
                 and earn MyCSD points, all in one place.
               </p>
               <div className="mt-8 flex items-center justify-center gap-3">
@@ -192,7 +192,7 @@ export default function Home({ upcoming, past }: HomeProps) {
               </div>
               {upcoming.length === 0 ? (
                 <p className="rounded-2xl glass p-8 text-center text-white/60">
-                  No upcoming events right now — check back soon.
+                  No upcoming events right now. Check back soon.
                 </p>
               ) : (
                 <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-3">

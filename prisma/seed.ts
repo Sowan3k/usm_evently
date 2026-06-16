@@ -131,7 +131,7 @@ async function main() {
         dressCode: "Casual",
         emergencyContact: "+60 12-345 6789",
         description:
-          "A 24-hour student hackathon with mentors, prizes, and free meals. The RM 15 fee covers food and a T-shirt and is paid directly to the organising club — no platform checkout.",
+          "A 24-hour student hackathon with mentors, prizes, and free meals. The RM 15 fee covers food and a T-shirt and is paid directly to the organising club, with no platform checkout.",
         date: daysFromNow(28),
         startTime: "09:00 AM",
         endTime: "09:00 AM (+1 day)",

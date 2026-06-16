@@ -19,7 +19,7 @@ export default function Header() {
     </Link>
   );
 
-  // The register/login page stays clean — just the logo and name.
+  // The register/login page stays clean: just the logo and name.
   const isAuthPage = router.pathname === "/register";
 
   return (

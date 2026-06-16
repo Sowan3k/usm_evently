@@ -38,13 +38,13 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     .catch(() => {});
   await sleep(1500);
 
-  // 1. Home — upcoming & past events
+  // 1. Home: upcoming & past events
   await page.goto(`${BASE}/home`, { waitUntil: "networkidle0" });
   await sleep(1800);
   await page.screenshot({ path: `${OUT}/01-home.png` });
   console.log("captured home");
 
-  // 2. Event detail — campus/safety/cultural info
+  // 2. Event detail: campus/safety/cultural info
   const events = await page.evaluate(async () => {
     const r = await fetch("/api/events?type=upcoming");
     const d = await r.json();
@@ -59,7 +59,7 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   await page.screenshot({ path: `${OUT}/02-event-detail.png`, fullPage: true });
   console.log("captured event detail");
 
-  // 3. Admin — create-event form (clip to the form card)
+  // 3. Admin: create-event form (clip to the form card)
   await page.goto(`${BASE}/admin`, { waitUntil: "networkidle0" });
   await sleep(1000);
   const formCard = await page.$("form");

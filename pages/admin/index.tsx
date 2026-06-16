@@ -497,7 +497,7 @@ export default function AdminDashboard({
                   Access, safety &amp; conduct
                 </legend>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {field("Price (RM) — 0 means free for all", "price", "number")}
+                  {field("Price in RM (0 = free for all)", "price", "number")}
                   {field("Capacity", "capacity", "number", "optional")}
                   {field("MyCSD Points", "csdPoints", "number")}
                   {field(

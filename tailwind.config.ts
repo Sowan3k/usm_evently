@@ -57,7 +57,7 @@ export default {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
-        // Custom Colors — USM brand + futuristic neon accents
+        // Custom Colors: USM brand + futuristic neon accents
         usmPurple: "#4B0082", // USM branding purple
         gold: "#FFD700", // brand gold
         dotted: "#F7C08A",

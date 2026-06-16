@@ -152,7 +152,7 @@ export default function Profile({ user, history }: ProfileProps) {
                   onChange={handleChange}
                 />
               ) : (
-                <p className="text-gray-600">{userInfo.phone || "—"}</p>
+                <p className="text-gray-600">{userInfo.phone || "Not set"}</p>
               )}
             </div>
           </CardContent>

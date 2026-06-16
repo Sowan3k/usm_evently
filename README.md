@@ -1,10 +1,10 @@
 # USM Evently
 
-A full-stack campus events platform for **Universiti Sains Malaysia (USM)** students — browse upcoming and past events, register (RSVP), pay for ticketed events, track your MyCSD points, and manage everything from an admin dashboard.
+A full-stack campus events platform for **Universiti Sains Malaysia (USM)** students. Browse upcoming and past events, register (RSVP), pay for ticketed events, track your MyCSD points, and manage everything from an admin dashboard.
 
 Built with **Next.js (Pages Router) + TypeScript**, a **PostgreSQL** database via **Prisma**, and authentication with **NextAuth**.
 
-> 📣 **Looking for collaborators!** This is an open student project for the USM community. See [Contributing](#contributing) below — beginners welcome.
+> 📣 **Looking for collaborators!** This is an open student project for the USM community. See [Contributing](#contributing) below; beginners welcome.
 
 ---
 
@@ -14,11 +14,11 @@ A glassmorphism UI with an animated aurora backdrop, Space Grotesk display type,
 
 ![Home page](docs/screenshots/01-home.png)
 
-| Login / Sign-up | Event detail — campus, safety & payment info |
+| Login / Sign-up | Event detail: campus, safety & payment info |
 |---|---|
 | ![Login](docs/screenshots/05-login.png) | ![Event detail](docs/screenshots/02-event-detail.png) |
 
-| Admin — create event (full organiser form) | User Agreement / rules |
+| Admin: create event (full organiser form) | User Agreement / rules |
 |---|---|
 | ![Admin create event](docs/screenshots/03-admin-create-event.png) | ![User Agreement](docs/screenshots/04-user-agreement.png) |
 
@@ -29,16 +29,16 @@ A glassmorphism UI with an animated aurora backdrop, Space Grotesk display type,
 ## Features
 
 **For everyone (no login required)**
-- 🌐 Browse **upcoming & past events** — thumbnails and full detail pages are public; you only need an account to register
+- 🌐 Browse **upcoming & past events**: thumbnails and full detail pages are public; you only need an account to register
 
 **For students**
 - 🔐 Email/password sign-up & login (sessions via NextAuth + bcrypt-hashed passwords)
-- 🪪 **Identity-verified accounts** — every sign-up must provide a matric number, IC, or passport so users are traceable USM students/staff (stored privately, never shown publicly)
+- 🪪 **Identity-verified accounts**: every sign-up must provide a matric number, IC, or passport so users are traceable USM students/staff (stored privately, never shown publicly)
 - ✅ Register / cancel registration for events (with capacity limits & past-event guards)
 - 💳 Simulated payment flow for ticketed events, recorded as real transactions
 - 👤 Profile page with editable details, MyCSD points, and real registration history
-- 📅 **Add to Calendar** — generates a downloadable `.ics` file for any event
-- 🔗 **Share Event** — uses the Web Share API with a clipboard fallback
+- 📅 **Add to Calendar**: generates a downloadable `.ics` file for any event
+- 🔗 **Share Event**: uses the Web Share API with a clipboard fallback
 
 **For event organisers / admins**
 - 🛠️ Protected admin dashboard to **create, edit, and delete** events (full CRUD)
@@ -49,10 +49,10 @@ A glassmorphism UI with an animated aurora backdrop, Space Grotesk display type,
   - A required **organiser emergency helpline**
   - **Poster upload** (JPG/PNG, max 5 MB) with client- & server-side validation
   - A required **Organizer Agreement** checkbox before publishing
-- 💸 **Flexible payments** — use the built-in checkout, *or* provide your own **bank details, Touch 'n Go, and a payment QR code** for attendees to pay you directly (optional)
-- 👮 Role-based access control — admin routes & actions are blocked for students (403)
-- 🚫 **Moderation tools** — block/unblock any user (with their verified ID visible for tracing), or ban any email address (e.g. Gmail) so it can neither sign in nor register
-- 📜 Public **User Agreement** (`/terms`) — admins may delete any rule-violating event and block any user or email
+- 💸 **Flexible payments**: use the built-in checkout, *or* provide your own **bank details, Touch 'n Go, and a payment QR code** for attendees to pay you directly (optional)
+- 👮 Role-based access control: admin routes & actions are blocked for students (403)
+- 🚫 **Moderation tools**: block/unblock any user (with their verified ID visible for tracing), or ban any email address (e.g. Gmail) so it can neither sign in nor register
+- 📜 Public **User Agreement** (`/terms`): admins may delete any rule-violating event and block any user or email
 
 ---
 
@@ -77,8 +77,8 @@ A glassmorphism UI with an animated aurora backdrop, Space Grotesk display type,
 pages/
   index.tsx              # Redirects to the public home page
   register.tsx           # Combined login / sign-up (with ID verification)
-  home.tsx               # Upcoming & past events — PUBLIC (SSR from DB)
-  events/[id].tsx        # Event detail — PUBLIC; RSVP/calendar/share need login
+  home.tsx               # Upcoming & past events, PUBLIC (SSR from DB)
+  events/[id].tsx        # Event detail, PUBLIC; RSVP/calendar/share need login
   profile.tsx            # User profile + registration history
   payment.tsx            # Simulated checkout
   terms.tsx              # Public User Agreement / rules
@@ -197,7 +197,7 @@ It installs dependencies on first run, creates a `.env` from `.env.example` if o
 
 ## Contributing
 
-Contributions from the USM community (and anyone else) are very welcome — this is a friendly project to learn full-stack development on.
+Contributions from the USM community (and anyone else) are very welcome; this is a friendly project to learn full-stack development on.
 
 1. **Fork** the repo and clone your fork.
 2. Follow [Getting Started](#getting-started) to run it locally (or just run `start.bat` on Windows).
@@ -219,6 +219,6 @@ Not sure where to start? Open an issue and say hi. 🙂
 
 ## Notes
 
-- The payment flow is a **simulation** — no real card is charged and raw card numbers are never stored. The payment record (amount, description, event) is persisted to demonstrate the data model. Swapping in a real provider (e.g. Stripe) would only touch `pages/payment.tsx` and `pages/api/payments.ts`.
+- The payment flow is a **simulation**: no real card is charged and raw card numbers are never stored. The payment record (amount, description, event) is persisted to demonstrate the data model. Swapping in a real provider (e.g. Stripe) would only touch `pages/payment.tsx` and `pages/api/payments.ts`.
 - MyCSD points reflect USM's Co-curriculum & Soft-skill Development scheme; events carry point values that could be awarded on attendance.
-- Event **posters** are validated (JPG/PNG, ≤ 5 MB) and currently stored as base64 data URLs in the database to keep setup zero-config. For production scale, swap this for object storage (Vercel Blob / S3) — a great [first contribution](#contributing).
+- Event **posters** are validated (JPG/PNG, ≤ 5 MB) and currently stored as base64 data URLs in the database to keep setup zero-config. For production scale, swap this for object storage (Vercel Blob / S3), a great [first contribution](#contributing).
