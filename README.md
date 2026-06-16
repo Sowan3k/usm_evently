@@ -114,6 +114,16 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+### Windows quick start (`start.bat`)
+
+On Windows you can skip the manual steps and just double-click **`start.bat`** in the project root (or run it from a terminal):
+
+```bat
+start.bat
+```
+
+It installs dependencies on first run, creates a `.env` from `.env.example` if one is missing (prompting you to fill it in), generates the Prisma client, and launches the dev server at [http://localhost:3000](http://localhost:3000). You still need a configured `DATABASE_URL` and to run `npm run db:migrate` / `npm run db:seed` once to set up the database.
+
 ### Demo accounts (from the seed)
 
 | Role | Email | Password |
