@@ -1,13 +1,10 @@
 import type { GetServerSideProps } from "next";
-import { getAuthSession } from "@/lib/page-auth";
 
-// Index is purely a router: send signed-in users to the app, everyone else
-// to the login page. Done server-side to avoid a flash of the wrong page.
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await getAuthSession(ctx);
+// Index is purely a router: the home page is public, so send everyone there.
+export const getServerSideProps: GetServerSideProps = async () => {
   return {
     redirect: {
-      destination: session ? "/home" : "/register",
+      destination: "/home",
       permanent: false,
     },
   };

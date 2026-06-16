@@ -14,11 +14,15 @@ export default function Register() {
     name: "",
     email: "",
     password: "",
+    identityType: "MATRIC",
+    identityNumber: "",
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -93,15 +97,42 @@ export default function Register() {
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
               {mode === "register" && (
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Full Name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  required
-                  className="px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                />
+                <>
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Full Name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                  />
+                  <div className="flex gap-2">
+                    <select
+                      name="identityType"
+                      value={formData.identityType}
+                      onChange={handleChange}
+                      className="px-3 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500 bg-white"
+                    >
+                      <option value="MATRIC">Matric No.</option>
+                      <option value="IC">IC</option>
+                      <option value="PASSPORT">Passport</option>
+                    </select>
+                    <input
+                      type="text"
+                      name="identityNumber"
+                      placeholder="Your matric / IC / passport no."
+                      value={formData.identityNumber}
+                      onChange={handleChange}
+                      required
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                    />
+                  </div>
+                  <p className="text-xs text-gray-500 -mt-1 px-2">
+                    USM students &amp; staff only. Your ID is used for
+                    verification and is never shown publicly.
+                  </p>
+                </>
               )}
               <input
                 type="email"

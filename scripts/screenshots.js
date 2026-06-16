@@ -47,7 +47,10 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     const d = await r.json();
     return d.events;
   });
-  const target = events.find((e) => /career/i.test(e.title)) || events[0];
+  const target =
+    events.find((e) => /hackathon/i.test(e.title)) ||
+    events.find((e) => /career/i.test(e.title)) ||
+    events[0];
   await page.goto(`${BASE}/events/${target.id}`, { waitUntil: "networkidle0" });
   await sleep(1000);
   await page.screenshot({ path: `${OUT}/02-event-detail.png`, fullPage: true });

@@ -27,6 +27,8 @@ async function main() {
       passwordHash: adminPassword,
       role: "ADMIN",
       phone: "+60 4-653 3888",
+      identityType: "IC",
+      identityNumber: "850204-07-5231",
     },
   });
 
@@ -40,6 +42,8 @@ async function main() {
       role: "STUDENT",
       phone: "+60145202958",
       myCSDPoints: 168,
+      identityType: "MATRIC",
+      identityNumber: "164213",
     },
   });
 
@@ -115,6 +119,36 @@ async function main() {
         capacity: 300,
         price: 25,
         csdPoints: 8,
+      },
+    }),
+    prisma.event.create({
+      data: {
+        title: "Tech Society Hackathon",
+        campus: "Main Campus (Minden, Penang)",
+        school: "School of Computer Sciences",
+        organizer: "USM Tech Society",
+        openToPublic: false,
+        dressCode: "Casual",
+        emergencyContact: "+60 12-345 6789",
+        description:
+          "A 24-hour student hackathon with mentors, prizes, and free meals. The RM 15 fee covers food and a T-shirt and is paid directly to the organising club — no platform checkout.",
+        date: daysFromNow(28),
+        startTime: "09:00 AM",
+        endTime: "09:00 AM (+1 day)",
+        location: "School of Computer Sciences, USM",
+        imageUrl: "/event1.jpg",
+        category: "Tech",
+        capacity: 120,
+        price: 15,
+        csdPoints: 10,
+        // Organizer-provided payment instead of the platform checkout.
+        useExternalPayment: true,
+        bankName: "Maybank",
+        bankAccountName: "USM Tech Society",
+        bankAccountNumber: "5641 2233 4455",
+        tngNumber: "+60 12-345 6789",
+        paymentInstructions:
+          "Bank in or Touch 'n Go the RM 15 fee, then send your receipt to the organiser on WhatsApp to confirm your slot.",
       },
     }),
   ]);

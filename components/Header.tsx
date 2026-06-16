@@ -69,6 +69,21 @@ export default function Header() {
             </button>
           </div>
         )}
+
+        {/* Visitors who aren't signed in can still browse events. */}
+        {!isAuthPage && !session && (
+          <div className="flex items-center space-x-4">
+            {router.pathname !== "/home" && (
+              <NavButton href="/home" label="Home" />
+            )}
+            <Link
+              href="/register"
+              className="px-4 py-2 bg-gold text-usmPurple font-semibold rounded-lg shadow hover:bg-yellow-400"
+            >
+              Log in / Sign up
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   );

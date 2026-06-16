@@ -28,9 +28,15 @@ export default function Terms() {
               </h2>
               <p>
                 USM Evently is a community platform for Universiti Sains
-                Malaysia (USM) students, staff, and approved organisers. You are
-                responsible for keeping your account secure and for all activity
-                under it. You must provide accurate information when registering.
+                Malaysia (USM) students, staff, and approved organisers. To keep
+                the community safe and accountable, every account must register
+                with a valid identification number — your{" "}
+                <strong>matric number, IC, or passport</strong>. This
+                information is used solely for verification and to trace
+                fraudulent activity if necessary; it is never shown publicly.
+                Providing false identification is grounds for an immediate,
+                permanent block. You are responsible for keeping your account
+                secure and for all activity under it.
               </p>
             </section>
 
@@ -107,9 +113,13 @@ export default function Terms() {
                 6. Payments
               </h2>
               <p>
-                Payments shown on the platform are processed for ticketed
-                events. Raw card details are never stored. Refunds, where
-                applicable, are handled by the event organiser.
+                Ticketed events may use the built-in platform checkout (raw card
+                details are never stored) or the organiser&apos;s own payment
+                details (bank transfer, Touch &apos;n Go, or QR code). When you
+                pay an organiser directly, that transaction is strictly between
+                you and the organiser — verify the details and keep your
+                receipt. Refunds, where applicable, are handled by the event
+                organiser.
               </p>
             </section>
 

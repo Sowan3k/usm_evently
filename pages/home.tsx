@@ -4,7 +4,6 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { useState, useEffect } from "react";
 import { prisma } from "@/lib/prisma";
-import { getAuthSession, loginRedirect } from "@/lib/page-auth";
 import { serializeEvent, formatEventDate, type SerializedEvent } from "@/lib/events";
 
 type HomeProps = {
@@ -12,12 +11,8 @@ type HomeProps = {
   past: SerializedEvent[];
 };
 
-export const getServerSideProps: GetServerSideProps<HomeProps> = async (
-  ctx
-) => {
-  const session = await getAuthSession(ctx);
-  if (!session) return loginRedirect;
-
+// Public: anyone can browse upcoming & past events without signing in.
+export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
   const now = new Date();
   const [upcoming, past] = await Promise.all([
     prisma.event.findMany({

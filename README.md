@@ -24,9 +24,12 @@ Built with **Next.js (Pages Router) + TypeScript**, a **PostgreSQL** database vi
 
 ## Features
 
+**For everyone (no login required)**
+- 🌐 Browse **upcoming & past events** — thumbnails and full detail pages are public; you only need an account to register
+
 **For students**
 - 🔐 Email/password sign-up & login (sessions via NextAuth + bcrypt-hashed passwords)
-- 🗓️ Browse upcoming & past events, with detail pages pulled from the database
+- 🪪 **Identity-verified accounts** — every sign-up must provide a matric number, IC, or passport so users are traceable USM students/staff (stored privately, never shown publicly)
 - ✅ Register / cancel registration for events (with capacity limits & past-event guards)
 - 💳 Simulated payment flow for ticketed events, recorded as real transactions
 - 👤 Profile page with editable details, MyCSD points, and real registration history
@@ -42,8 +45,9 @@ Built with **Next.js (Pages Router) + TypeScript**, a **PostgreSQL** database vi
   - A required **organiser emergency helpline**
   - **Poster upload** (JPG/PNG, max 5 MB) with client- & server-side validation
   - A required **Organizer Agreement** checkbox before publishing
+- 💸 **Flexible payments** — use the built-in checkout, *or* provide your own **bank details, Touch 'n Go, and a payment QR code** for attendees to pay you directly (optional)
 - 👮 Role-based access control — admin routes & actions are blocked for students (403)
-- 🚫 **Moderation tools** — block/unblock any user, or ban any email address (e.g. Gmail) so it can neither sign in nor register
+- 🚫 **Moderation tools** — block/unblock any user (with their verified ID visible for tracing), or ban any email address (e.g. Gmail) so it can neither sign in nor register
 - 📜 Public **User Agreement** (`/terms`) — admins may delete any rule-violating event and block any user or email
 
 ---
@@ -67,10 +71,10 @@ Built with **Next.js (Pages Router) + TypeScript**, a **PostgreSQL** database vi
 
 ```
 pages/
-  index.tsx              # Redirects by auth state (login vs home)
-  register.tsx           # Combined login / sign-up
-  home.tsx               # Upcoming & past events (SSR from DB)
-  events/[id].tsx        # Event detail + RSVP + calendar/share
+  index.tsx              # Redirects to the public home page
+  register.tsx           # Combined login / sign-up (with ID verification)
+  home.tsx               # Upcoming & past events — PUBLIC (SSR from DB)
+  events/[id].tsx        # Event detail — PUBLIC; RSVP/calendar/share need login
   profile.tsx            # User profile + registration history
   payment.tsx            # Simulated checkout
   terms.tsx              # Public User Agreement / rules

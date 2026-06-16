@@ -21,6 +21,13 @@ export type SerializedEvent = {
   capacity: number | null;
   price: number;
   csdPoints: number;
+  useExternalPayment: boolean;
+  bankName: string | null;
+  bankAccountName: string | null;
+  bankAccountNumber: string | null;
+  tngNumber: string | null;
+  paymentInstructions: string | null;
+  paymentQrUrl: string | null;
   isPast: boolean;
 };
 
@@ -50,6 +57,13 @@ export function serializeEvent(event: Event): SerializedEvent {
     capacity: event.capacity,
     price: event.price,
     csdPoints: event.csdPoints,
+    useExternalPayment: event.useExternalPayment,
+    bankName: event.bankName,
+    bankAccountName: event.bankAccountName,
+    bankAccountNumber: event.bankAccountNumber,
+    tngNumber: event.tngNumber,
+    paymentInstructions: event.paymentInstructions,
+    paymentQrUrl: event.paymentQrUrl,
     isPast: event.date.getTime() < Date.now(),
   };
 }

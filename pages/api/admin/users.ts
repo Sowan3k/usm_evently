@@ -18,6 +18,8 @@ export default async function handler(
         name: true,
         email: true,
         role: true,
+        identityType: true,
+        identityNumber: true,
         blocked: true,
         blockedReason: true,
         createdAt: true,

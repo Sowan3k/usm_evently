@@ -18,7 +18,7 @@ export default async function handler(
       .json({ error: parsed.error.issues[0]?.message ?? "Invalid input" });
   }
 
-  const { name, email, password } = parsed.data;
+  const { name, email, password, identityType, identityNumber } = parsed.data;
   const normalizedEmail = email.toLowerCase().trim();
 
   // Reject sign-ups from addresses an admin has blocked.
@@ -46,6 +46,8 @@ export default async function handler(
       name,
       email: normalizedEmail,
       passwordHash,
+      identityType,
+      identityNumber: identityNumber.trim(),
     },
     select: { id: true, name: true, email: true },
   });

@@ -6,8 +6,9 @@ import Footer from "../../components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { getAuthSession, loginRedirect } from "@/lib/page-auth";
+import { getAuthSession } from "@/lib/page-auth";
 import {
   serializeEvent,
   formatEventDate,
@@ -18,13 +19,15 @@ import { downloadICS } from "@/lib/calendar";
 type EventDetailProps = {
   event: SerializedEvent;
   isRegistered: boolean;
+  isLoggedIn: boolean;
 };
 
+// Public: event details are viewable without signing in. Registering still
+// requires an account.
 export const getServerSideProps: GetServerSideProps<EventDetailProps> = async (
   ctx
 ) => {
   const session = await getAuthSession(ctx);
-  if (!session) return loginRedirect;
 
   const id = ctx.params?.id as string;
   const event = await prisma.event.findUnique({ where: { id } });
@@ -32,14 +35,17 @@ export const getServerSideProps: GetServerSideProps<EventDetailProps> = async (
     return { notFound: true };
   }
 
-  const registration = await prisma.registration.findUnique({
-    where: { userId_eventId: { userId: session.user.id, eventId: id } },
-  });
+  const registration = session
+    ? await prisma.registration.findUnique({
+        where: { userId_eventId: { userId: session.user.id, eventId: id } },
+      })
+    : null;
 
   return {
     props: {
       event: serializeEvent(event),
       isRegistered: registration?.status === "REGISTERED",
+      isLoggedIn: Boolean(session),
     },
   };
 };
@@ -47,6 +53,7 @@ export const getServerSideProps: GetServerSideProps<EventDetailProps> = async (
 export default function EventDetails({
   event,
   isRegistered: initialRegistered,
+  isLoggedIn,
 }: EventDetailProps) {
   const router = useRouter();
   const [isRegistered, setIsRegistered] = useState(initialRegistered);
@@ -73,6 +80,12 @@ export default function EventDetails({
           `/payment?eventId=${event.id}&amount=${event.price}&description=${encodeURIComponent(
             event.title
           )}`
+        );
+        return;
+      }
+      if (data.externalPayment) {
+        setMessage(
+          "You're registered! Please pay the organiser directly using the payment details below."
         );
         return;
       }
@@ -223,6 +236,57 @@ export default function EventDetails({
                 </p>
               </div>
 
+              {event.price > 0 && event.useExternalPayment && (
+                <div className="mb-6 rounded-md border-l-4 border-green-600 bg-green-50 p-4">
+                  <p className="text-sm font-semibold text-green-800">
+                    Pay the organiser directly (RM {event.price.toFixed(2)})
+                  </p>
+                  <p className="text-xs text-gray-600 mb-2">
+                    This event uses the organiser&apos;s own payment method
+                    instead of platform checkout.
+                  </p>
+                  <ul className="text-sm text-gray-700 space-y-1">
+                    {event.bankName && (
+                      <li>
+                        <strong>Bank:</strong> {event.bankName}
+                      </li>
+                    )}
+                    {event.bankAccountName && (
+                      <li>
+                        <strong>Account name:</strong> {event.bankAccountName}
+                      </li>
+                    )}
+                    {event.bankAccountNumber && (
+                      <li>
+                        <strong>Account number:</strong>{" "}
+                        {event.bankAccountNumber}
+                      </li>
+                    )}
+                    {event.tngNumber && (
+                      <li>
+                        <strong>Touch &apos;n Go:</strong> {event.tngNumber}
+                      </li>
+                    )}
+                  </ul>
+                  {event.paymentInstructions && (
+                    <p className="text-sm text-gray-600 mt-2">
+                      {event.paymentInstructions}
+                    </p>
+                  )}
+                  {event.paymentQrUrl && (
+                    <div className="mt-3">
+                      <p className="text-xs text-gray-500 mb-1">Scan to pay:</p>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={event.paymentQrUrl}
+                        alt="Payment QR code"
+                        className="h-44 w-44 object-contain rounded border bg-white p-1"
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+
               {event.posterUrl && (
                 <div className="mb-6">
                   <p className="text-sm font-semibold text-gray-600 mb-2">
@@ -245,7 +309,11 @@ export default function EventDetails({
 
               <div className="flex flex-wrap gap-3">
                 {!event.isPast &&
-                  (isRegistered ? (
+                  (!isLoggedIn ? (
+                    <Link href="/register">
+                      <Button variant="default">Log in to register</Button>
+                    </Link>
+                  ) : isRegistered ? (
                     <Button
                       variant="destructive"
                       onClick={handleCancel}

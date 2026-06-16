@@ -21,6 +21,8 @@ type AdminUser = {
   name: string;
   email: string;
   role: string;
+  identityType: string | null;
+  identityNumber: string | null;
   blocked: boolean;
   blockedReason: string | null;
   createdAt: string;
@@ -56,6 +58,8 @@ export const getServerSideProps: GetServerSideProps<AdminProps> = async (
         name: true,
         email: true,
         role: true,
+        identityType: true,
+        identityNumber: true,
         blocked: true,
         blockedReason: true,
         createdAt: true,
@@ -73,6 +77,8 @@ export const getServerSideProps: GetServerSideProps<AdminProps> = async (
         name: u.name,
         email: u.email,
         role: u.role,
+        identityType: u.identityType,
+        identityNumber: u.identityNumber,
         blocked: u.blocked,
         blockedReason: u.blockedReason,
         createdAt: u.createdAt.toISOString(),
@@ -107,6 +113,12 @@ type FormState = {
   capacity: string;
   price: string;
   csdPoints: string;
+  bankName: string;
+  bankAccountName: string;
+  bankAccountNumber: string;
+  tngNumber: string;
+  paymentInstructions: string;
+  paymentQrUrl: string;
 };
 
 const emptyForm: FormState = {
@@ -128,6 +140,12 @@ const emptyForm: FormState = {
   capacity: "",
   price: "0",
   csdPoints: "0",
+  bankName: "",
+  bankAccountName: "",
+  bankAccountNumber: "",
+  tngNumber: "",
+  paymentInstructions: "",
+  paymentQrUrl: "",
 };
 
 const MAX_POSTER_BYTES = 5 * 1024 * 1024; // 5 MB
@@ -140,10 +158,12 @@ export default function AdminDashboard({
   const router = useRouter();
   const [form, setForm] = useState<FormState>(emptyForm);
   const [openToPublic, setOpenToPublic] = useState(false);
+  const [useExternalPayment, setUseExternalPayment] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [posterError, setPosterError] = useState<string | null>(null);
+  const [qrError, setQrError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   // Moderation panel state
@@ -161,29 +181,39 @@ export default function AdminDashboard({
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePoster = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPosterError(null);
+  // Reads an image file into a data URL on the given form field, validating
+  // type and size. Used for both the poster and the payment QR code.
+  const readImageInto = (
+    field: "posterUrl" | "paymentQrUrl",
+    setErr: (m: string | null) => void
+  ) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErr(null);
     const file = e.target.files?.[0];
     if (!file) return;
     if (!["image/png", "image/jpeg"].includes(file.type)) {
-      setPosterError("Poster must be a JPG or PNG image.");
+      setErr("Image must be a JPG or PNG.");
       return;
     }
     if (file.size > MAX_POSTER_BYTES) {
-      setPosterError("Poster is too large (max 5 MB).");
+      setErr("Image is too large (max 5 MB).");
       return;
     }
     const reader = new FileReader();
     reader.onload = () =>
-      setForm((prev) => ({ ...prev, posterUrl: String(reader.result) }));
+      setForm((prev) => ({ ...prev, [field]: String(reader.result) }));
     reader.readAsDataURL(file);
   };
+
+  const handlePoster = readImageInto("posterUrl", setPosterError);
+  const handleQr = readImageInto("paymentQrUrl", setQrError);
 
   const startEdit = (event: SerializedEvent) => {
     setEditingId(event.id);
     setError(null);
     setPosterError(null);
+    setQrError(null);
     setOpenToPublic(event.openToPublic);
+    setUseExternalPayment(event.useExternalPayment);
     setAgreed(true); // already published, agreement previously accepted
     setForm({
       title: event.title,
@@ -204,6 +234,12 @@ export default function AdminDashboard({
       capacity: event.capacity?.toString() ?? "",
       price: event.price.toString(),
       csdPoints: event.csdPoints.toString(),
+      bankName: event.bankName ?? "",
+      bankAccountName: event.bankAccountName ?? "",
+      bankAccountNumber: event.bankAccountNumber ?? "",
+      tngNumber: event.tngNumber ?? "",
+      paymentInstructions: event.paymentInstructions ?? "",
+      paymentQrUrl: event.paymentQrUrl ?? "",
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -212,9 +248,11 @@ export default function AdminDashboard({
     setEditingId(null);
     setForm(emptyForm);
     setOpenToPublic(false);
+    setUseExternalPayment(false);
     setAgreed(false);
     setError(null);
     setPosterError(null);
+    setQrError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -229,6 +267,7 @@ export default function AdminDashboard({
     const payload = {
       ...form,
       openToPublic,
+      useExternalPayment,
       capacity: form.capacity === "" ? undefined : form.capacity,
       agreedToTerms: true,
     };
@@ -537,6 +576,89 @@ export default function AdminDashboard({
                 </div>
               </fieldset>
 
+              {/* Alternative payment (optional) */}
+              <fieldset className="space-y-4">
+                <legend className="text-sm font-semibold text-gray-500 uppercase tracking-wide">
+                  Payment method
+                </legend>
+                <label className="flex items-center gap-2 text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={useExternalPayment}
+                    onChange={(e) => setUseExternalPayment(e.target.checked)}
+                    className="h-4 w-4"
+                  />
+                  Use my own payment details instead of platform checkout
+                  (optional)
+                </label>
+                {useExternalPayment && (
+                  <div className="space-y-4 rounded-md border border-gray-200 p-4">
+                    <p className="text-xs text-gray-500">
+                      Provide at least one way for attendees to pay you (bank,
+                      Touch &apos;n Go, or a QR code). Shown on the event page
+                      for paid events.
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {field("Bank name", "bankName", "text", "e.g. Maybank")}
+                      {field("Account holder name", "bankAccountName")}
+                      {field("Account number", "bankAccountNumber")}
+                      {field(
+                        "Touch 'n Go (eWallet no./ID)",
+                        "tngNumber",
+                        "text",
+                        "+60..."
+                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-700 font-medium">
+                        Payment instructions
+                      </label>
+                      <textarea
+                        name="paymentInstructions"
+                        value={form.paymentInstructions}
+                        onChange={handleChange}
+                        rows={2}
+                        placeholder="e.g. Transfer and send the receipt to the organiser on WhatsApp."
+                        className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-usmPurple"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-700 font-medium">
+                        Payment QR code (JPG/PNG, max 5 MB)
+                      </label>
+                      <input
+                        type="file"
+                        accept="image/png,image/jpeg"
+                        onChange={handleQr}
+                        className="w-full text-sm text-gray-600 file:mr-3 file:rounded-md file:border-0 file:bg-usmPurple file:px-3 file:py-1.5 file:text-white"
+                      />
+                      {qrError && (
+                        <p className="text-sm text-red-600 mt-1">{qrError}</p>
+                      )}
+                      {form.paymentQrUrl && (
+                        <div className="mt-2 flex items-center gap-3">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={form.paymentQrUrl}
+                            alt="QR preview"
+                            className="h-20 w-20 object-contain rounded border"
+                          />
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setForm((p) => ({ ...p, paymentQrUrl: "" }))
+                            }
+                            className="text-sm text-red-600 underline"
+                          >
+                            Remove QR
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </fieldset>
+
               {/* Agreement */}
               <label className="flex items-start gap-2 text-sm text-gray-700">
                 <input
@@ -730,6 +852,11 @@ export default function AdminDashboard({
                       <p className="text-sm text-gray-500 truncate">
                         {u.email} · {u.registrationCount} registrations
                       </p>
+                      {u.identityNumber && (
+                        <p className="text-xs text-gray-400 truncate">
+                          ID ({u.identityType}): {u.identityNumber}
+                        </p>
+                      )}
                     </div>
                     <Button
                       variant={u.blocked ? "secondary" : "destructive"}

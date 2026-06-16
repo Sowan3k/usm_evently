@@ -61,7 +61,10 @@ export default async function handler(
 
     return res.status(201).json({
       registration: { id: registration.id, status: registration.status },
-      requiresPayment: event.price > 0,
+      // Only send to the platform checkout for paid events that use it.
+      // Organizer-provided (external) payment is settled directly with them.
+      requiresPayment: event.price > 0 && !event.useExternalPayment,
+      externalPayment: event.price > 0 && event.useExternalPayment,
     });
   }
 

@@ -4,6 +4,14 @@ export const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters").max(100),
   email: z.string().email("Please enter a valid email address"),
   password: z.string().min(6, "Password must be at least 6 characters").max(100),
+  // Every account must be a verifiable USM student or staff member.
+  identityType: z.enum(["MATRIC", "IC", "PASSPORT"], {
+    errorMap: () => ({ message: "Please choose an ID type" }),
+  }),
+  identityNumber: z
+    .string()
+    .min(4, "Please enter your matric number / IC / passport")
+    .max(40),
 });
 
 export const profileUpdateSchema = z.object({
@@ -46,6 +54,23 @@ export const eventSchema = z.object({
   capacity: z.coerce.number().int().nonnegative().optional(),
   price: z.coerce.number().nonnegative().default(0),
   csdPoints: z.coerce.number().int().nonnegative().default(0),
+
+  // Optional alternative (organizer-provided) payment details.
+  useExternalPayment: z.coerce.boolean().default(false),
+  bankName: z.string().max(120).optional().or(z.literal("")),
+  bankAccountName: z.string().max(120).optional().or(z.literal("")),
+  bankAccountNumber: z.string().max(60).optional().or(z.literal("")),
+  tngNumber: z.string().max(60).optional().or(z.literal("")),
+  paymentInstructions: z.string().max(500).optional().or(z.literal("")),
+  paymentQrUrl: z
+    .string()
+    .max(MAX_POSTER_CHARS, "QR image is too large (max 5 MB)")
+    .refine(
+      (v) => v === "" || /^data:image\/(png|jpe?g);base64,/.test(v),
+      "QR must be a JPG or PNG image"
+    )
+    .optional()
+    .or(z.literal("")),
 });
 
 export const blockEmailSchema = z.object({

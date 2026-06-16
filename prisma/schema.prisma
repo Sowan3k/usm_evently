@@ -27,15 +27,27 @@ enum PaymentStatus {
   FAILED
 }
 
+enum IdentityType {
+  MATRIC
+  IC
+  PASSPORT
+}
+
 model User {
-  id            String   @id @default(cuid())
-  name          String
-  email         String   @unique
-  passwordHash  String
-  phone         String?
-  avatarUrl     String?
-  myCSDPoints   Int      @default(0)
-  role          Role     @default(STUDENT)
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  phone        String?
+  avatarUrl    String?
+  myCSDPoints  Int      @default(0)
+  role         Role     @default(STUDENT)
+
+  // Identity verification — every account must be a traceable USM student or
+  // staff member (matric no. / IC / passport) so bad actors can be identified.
+  identityType   IdentityType?
+  identityNumber String?
+
   blocked       Boolean  @default(false)
   blockedReason String?
   createdAt     DateTime @default(now())
@@ -78,6 +90,16 @@ model Event {
   capacity  Int?
   price     Float   @default(0)
   csdPoints Int     @default(0)
+
+  // Optional alternative payment — organizers who don't want to use the
+  // built-in platform checkout can provide their own details instead.
+  useExternalPayment  Boolean @default(false)
+  bankName            String?
+  bankAccountName     String?
+  bankAccountNumber   String?
+  tngNumber           String? // Touch 'n Go eWallet number / ID
+  paymentQrUrl        String? // payment QR image (JPG/PNG, stored as a data URL)
+  paymentInstructions String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
