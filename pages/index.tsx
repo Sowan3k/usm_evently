@@ -1,12 +1,18 @@
-import { useEffect } from "react";
-import { useRouter } from "next/router";
+import type { GetServerSideProps } from "next";
+import { getAuthSession } from "@/lib/page-auth";
 
-export default function Home() {
-  const router = useRouter();
+// Index is purely a router: send signed-in users to the app, everyone else
+// to the login page. Done server-side to avoid a flash of the wrong page.
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getAuthSession(ctx);
+  return {
+    redirect: {
+      destination: session ? "/home" : "/register",
+      permanent: false,
+    },
+  };
+};
 
-  useEffect(() => {
-    router.push("/register");
-  }, [router]);
-
-  return null; // This renders nothing as it redirects immediately.
+export default function Index() {
+  return null;
 }
