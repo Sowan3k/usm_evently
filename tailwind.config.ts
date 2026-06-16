@@ -69,7 +69,7 @@ export default {
       // Custom Background Patterns
       backgroundImage: {
         "dotted-pattern":
-          "radial-gradient(circle, rgba(255, 215, 0, 0.7) 100px, transparent 1px)", // Golden dotted pattern
+          "radial-gradient(circle, rgba(255, 215, 0, 0.7) 1px, transparent 1px)", // Golden dotted pattern
       },
       backgroundSize: {
         "dotted-spacing": "20px 20px", // Spacing between dots

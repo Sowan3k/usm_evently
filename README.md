@@ -1,40 +1,152 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# USM Evently
+
+A full-stack campus events platform for **Universiti Sains Malaysia (USM)** students — browse upcoming and past events, register (RSVP), pay for ticketed events, track your MyCSD points, and manage everything from an admin dashboard.
+
+Built with **Next.js (Pages Router) + TypeScript**, a **PostgreSQL** database via **Prisma**, and authentication with **NextAuth**.
+
+---
+
+## Features
+
+**For students**
+- 🔐 Email/password sign-up & login (sessions via NextAuth + bcrypt-hashed passwords)
+- 🗓️ Browse upcoming & past events, with detail pages pulled from the database
+- ✅ Register / cancel registration for events (with capacity limits & past-event guards)
+- 💳 Simulated payment flow for ticketed events, recorded as real transactions
+- 👤 Profile page with editable details, MyCSD points, and real registration history
+- 📅 **Add to Calendar** — generates a downloadable `.ics` file for any event
+- 🔗 **Share Event** — uses the Web Share API with a clipboard fallback
+
+**For admins**
+- 🛠️ Protected admin dashboard to **create, edit, and delete** events (full CRUD)
+- 👮 Role-based access control — admin routes & actions are blocked for students (403)
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 15 (Pages Router) |
+| Language | TypeScript |
+| Database | PostgreSQL |
+| ORM | Prisma |
+| Auth | NextAuth (Credentials provider, JWT sessions) |
+| Validation | Zod |
+| Styling | Tailwind CSS + shadcn/ui (Radix) |
+| Animation | Framer Motion |
+
+---
+
+## Architecture
+
+```
+pages/
+  index.tsx              # Redirects by auth state (login vs home)
+  register.tsx           # Combined login / sign-up
+  home.tsx               # Upcoming & past events (SSR from DB)
+  events/[id].tsx        # Event detail + RSVP + calendar/share
+  profile.tsx            # User profile + registration history
+  payment.tsx            # Simulated checkout
+  admin/index.tsx        # Admin-only event CRUD dashboard
+  api/
+    auth/[...nextauth].ts  # NextAuth handler
+    auth/register.ts       # Sign-up endpoint
+    events/                # Events CRUD (GET public, POST/PUT/DELETE admin)
+    registrations/         # RSVP / cancel / list mine
+    profile.ts             # Update profile
+    payments.ts            # Record a payment
+lib/
+  prisma.ts              # PrismaClient singleton
+  auth.ts                # NextAuth options
+  api-auth.ts            # requireAuth / requireAdmin guards (API)
+  page-auth.ts           # SSR auth/redirect helpers (pages)
+  validations.ts         # Zod schemas
+  events.ts              # Event serialization + date formatting
+  calendar.ts            # .ics generation
+prisma/
+  schema.prisma          # User, Event, Registration, Payment models
+  seed.ts                # Demo data
+```
+
+Pages read data directly through Prisma in `getServerSideProps` (server-rendered), while all mutations go through validated API routes guarded by `requireAuth` / `requireAdmin`.
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+- Node.js 18+
+- A PostgreSQL database (local, or a free cloud DB like [Neon](https://neon.tech) / [Supabase](https://supabase.com))
+
+### 1. Install
+
+```bash
+npm install
+```
+
+### 2. Configure environment
+
+Copy the template and fill in your values:
+
+```bash
+cp .env.example .env
+```
+
+```env
+DATABASE_URL="postgresql://user:password@host:5432/dbname?schema=public"
+NEXTAUTH_SECRET="run: openssl rand -base64 32"
+NEXTAUTH_URL="http://localhost:3000"
+```
+
+### 3. Set up the database
+
+```bash
+npm run db:migrate   # apply schema / create tables
+npm run db:seed      # load demo users + events
+```
+
+### 4. Run
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### Demo accounts (from the seed)
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+| Role | Email | Password |
+|------|-------|----------|
+| Student | `noormohammadsowan@student.usm.my` | `student123` |
+| Admin | `admin@usm.my` | `admin123` |
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Useful scripts
 
-## Learn More
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start the dev server |
+| `npm run build` | Production build (runs `prisma generate`) |
+| `npm run db:migrate` | Create/apply a migration (dev) |
+| `npm run db:deploy` | Apply migrations (production) |
+| `npm run db:seed` | Seed demo data |
+| `npm run db:studio` | Open Prisma Studio to browse the DB |
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+## Deploying to Vercel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Push this repo to GitHub and import it into [Vercel](https://vercel.com/new).
+2. Create a PostgreSQL database (Neon / Supabase / Vercel Postgres) and copy its connection string.
+3. In the Vercel project settings, add the environment variables: `DATABASE_URL`, `NEXTAUTH_SECRET`, and `NEXTAUTH_URL` (your production URL).
+4. Set the **Build Command** to `npm run vercel-build` (runs `prisma migrate deploy` before building).
+5. Deploy. After the first deploy, run `npm run db:seed` once against the production database if you want demo data.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+- The payment flow is a **simulation** — no real card is charged and raw card numbers are never stored. The payment record (amount, description, event) is persisted to demonstrate the data model. Swapping in a real provider (e.g. Stripe) would only touch `pages/payment.tsx` and `pages/api/payments.ts`.
+- MyCSD points reflect USM's Co-curriculum & Soft-skill Development scheme; events carry point values that could be awarded on attendance.
