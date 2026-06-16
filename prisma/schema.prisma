@@ -1,0 +1,90 @@
+// Prisma schema for USM Evently
+// Docs: https://www.prisma.io/docs
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+}
+
+enum RegistrationStatus {
+  REGISTERED
+  CANCELLED
+  ATTENDED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  phone        String?
+  avatarUrl    String?
+  myCSDPoints  Int      @default(0)
+  role         Role     @default(STUDENT)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  registrations Registration[]
+  payments      Payment[]
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  date        DateTime
+  startTime   String?
+  endTime     String?
+  location    String
+  imageUrl    String?
+  category    String?
+  capacity    Int?
+  price       Float    @default(0)
+  csdPoints   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  registrations Registration[]
+  payments      Payment[]
+}
+
+model Registration {
+  id        String             @id @default(cuid())
+  status    RegistrationStatus @default(REGISTERED)
+  createdAt DateTime           @default(now())
+
+  userId  String
+  eventId String
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event   Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, eventId])
+}
+
+model Payment {
+  id          String        @id @default(cuid())
+  amount      Float
+  description String?
+  status      PaymentStatus @default(COMPLETED)
+  createdAt   DateTime      @default(now())
+
+  userId  String
+  eventId String?
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event   Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+}
