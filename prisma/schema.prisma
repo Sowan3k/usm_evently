@@ -33,6 +33,19 @@ enum IdentityType {
   PASSPORT
 }
 
+enum OrganizerStatus {
+  NONE
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum EventStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id           String   @id @default(cuid())
   name         String
@@ -48,13 +61,20 @@ model User {
   identityType   IdentityType?
   identityNumber String?
 
+  // Organizer self-service: students may request organizer rights, which an
+  // admin approves before they can submit events for review.
+  organizerStatus OrganizerStatus @default(NONE)
+  organization    String? // club / society / department they represent
+  organizerNote   String? // why they want to organize (request message)
+
   blocked       Boolean  @default(false)
   blockedReason String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  registrations Registration[]
-  payments      Payment[]
+  registrations   Registration[]
+  payments        Payment[]
+  submittedEvents Event[]        @relation("SubmittedEvents")
 }
 
 /// Emails an admin has banned from the platform. Checked at both
@@ -101,6 +121,13 @@ model Event {
   paymentQrUrl        String? // payment QR image (JPG/PNG, stored as a data URL)
   paymentInstructions String?
 
+  // Moderation: events submitted by organizers await admin approval before
+  // they appear publicly. Admin-created events default to APPROVED.
+  status          EventStatus @default(APPROVED)
+  rejectionReason String?
+  submittedById   String?
+  submittedBy     User?       @relation("SubmittedEvents", fields: [submittedById], references: [id], onDelete: SetNull)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -109,9 +136,10 @@ model Event {
 }
 
 model Registration {
-  id        String             @id @default(cuid())
-  status    RegistrationStatus @default(REGISTERED)
-  createdAt DateTime           @default(now())
+  id         String             @id @default(cuid())
+  status     RegistrationStatus @default(REGISTERED)
+  attendedAt DateTime? // set when an organizer/admin checks the ticket in
+  createdAt  DateTime           @default(now())
 
   userId  String
   eventId String

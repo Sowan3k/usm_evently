@@ -153,7 +153,7 @@ async function main() {
     }),
   ]);
 
-  await Promise.all([
+  const past = await Promise.all([
     prisma.event.create({
       data: {
         title: "Convocation 2022",
@@ -216,18 +216,114 @@ async function main() {
     }),
   ]);
 
-  // Give the demo student a registration history so the profile page has
-  // real data to display.
-  await prisma.registration.create({
+  // An approved organizer (for the organizer self-service demo) plus a
+  // pending event they submitted, so the admin moderation queue has content.
+  const organizerPassword = await bcrypt.hash("organizer123", 10);
+  const organizer = await prisma.user.upsert({
+    where: { email: "limwei@student.usm.my" },
+    update: {},
+    create: {
+      name: "Lim Wei",
+      email: "limwei@student.usm.my",
+      passwordHash: organizerPassword,
+      role: "STUDENT",
+      identityType: "MATRIC",
+      identityNumber: "158002",
+      organizerStatus: "APPROVED",
+      organization: "USM Photography Club",
+    },
+  });
+
+  await prisma.event.create({
+    data: {
+      title: "Campus Photowalk & Workshop",
+      campus: "Main Campus (Minden, Penang)",
+      school: "Other / Inter-school",
+      organizer: "USM Photography Club",
+      submittedById: organizer.id,
+      status: "PENDING", // awaiting admin approval
+      openToPublic: true,
+      dressCode: "Casual",
+      emergencyContact: "+60 16-777 8899",
+      description:
+        "A guided photowalk around the Minden campus followed by a basics-of-composition workshop. Bring any camera or phone. Beginners welcome!",
+      date: daysFromNow(18),
+      startTime: "04:00 PM",
+      endTime: "07:00 PM",
+      location: "USM Main Campus entrance",
+      imageUrl: "/event2.jpg",
+      category: "Workshop",
+      capacity: 40,
+      price: 0,
+      csdPoints: 3,
+    },
+  });
+
+  // A user with a pending organizer request, so the admin sees a request to review.
+  await prisma.user.upsert({
+    where: { email: "aisyah@student.usm.my" },
+    update: {},
+    create: {
+      name: "Aisyah Rahman",
+      email: "aisyah@student.usm.my",
+      passwordHash: organizerPassword,
+      role: "STUDENT",
+      identityType: "MATRIC",
+      identityNumber: "162940",
+      organizerStatus: "PENDING",
+      organization: "USM Debate Society",
+      organizerNote:
+        "We'd like to run monthly debate nights and an inter-varsity tournament.",
+    },
+  });
+
+  // Give the demo student a richer history (for tickets, profile & analytics):
+  // registrations spread across recent months, some already attended.
+  const regPlan: { event: { id: string }; daysAgo: number; attended: boolean }[] = [
+    { event: past[0], daysAgo: 150, attended: true }, // Convocation
+    { event: past[1], daysAgo: 95, attended: true }, // Sports Day
+    { event: past[2], daysAgo: 60, attended: true }, // Science Expo
+    { event: upcoming[0], daysAgo: 25, attended: false }, // Orientation
+    { event: upcoming[1], daysAgo: 12, attended: false }, // Open Day
+    { event: upcoming[2], daysAgo: 4, attended: false }, // Career Fair
+  ];
+  for (const r of regPlan) {
+    const createdAt = daysFromNow(-r.daysAgo);
+    await prisma.registration.create({
+      data: {
+        userId: student.id,
+        eventId: r.event.id,
+        status: r.attended ? "ATTENDED" : "REGISTERED",
+        attendedAt: r.attended ? createdAt : null,
+        createdAt,
+      },
+    });
+  }
+
+  // A couple of completed payments so the revenue chart has data.
+  await prisma.payment.create({
     data: {
       userId: student.id,
-      eventId: upcoming[0].id,
-      status: "REGISTERED",
+      eventId: upcoming[2].id, // Career Fair (RM 25)
+      amount: 25,
+      description: "Career Fair 2026 Ticket",
+      status: "COMPLETED",
+      createdAt: daysFromNow(-4),
+    },
+  });
+  await prisma.payment.create({
+    data: {
+      userId: organizer.id,
+      eventId: upcoming[2].id,
+      amount: 25,
+      description: "Career Fair 2026 Ticket",
+      status: "COMPLETED",
+      createdAt: daysFromNow(-30),
     },
   });
 
   console.log(
-    `Seeded: admin=${admin.email}, student=${student.email}, events=${upcoming.length + 3}`
+    `Seeded: admin=${admin.email}, organizer=${organizer.email}, student=${student.email}`
   );
 }
 

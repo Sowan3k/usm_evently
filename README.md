@@ -28,11 +28,31 @@ A glassmorphism UI with an animated aurora backdrop, Space Grotesk display type,
 |---|---|
 | ![Profile](docs/screenshots/06-profile.png) | ![Payment](docs/screenshots/07-payment.png) |
 
+### My Tickets (QR check-in) & organizer self-service
+
+| My Tickets: a QR code per registration | Organizer: submit events for approval |
+|---|---|
+| ![My Tickets](docs/screenshots/10-tickets.png) | ![Organizer](docs/screenshots/11-organizer.png) |
+
 ### Admin tools
 
 | Create event (full organiser form) | User & email moderation |
 |---|---|
 | ![Admin create event](docs/screenshots/03-admin-create-event.png) | ![Admin moderation](docs/screenshots/08-admin-moderation.png) |
+
+**Admin analytics dashboard**
+
+![Analytics](docs/screenshots/09-analytics.png)
+
+**Approval queue** (organizer-submitted events await review)
+
+![Pending approvals](docs/screenshots/12-admin-queues.png)
+
+### Bilingual (English / Bahasa Malaysia)
+
+The same home page with the language toggled to Bahasa Malaysia:
+
+![Home in Bahasa Malaysia](docs/screenshots/13-home-bm.png)
 
 ### User Agreement
 
@@ -46,29 +66,39 @@ A glassmorphism UI with an animated aurora backdrop, Space Grotesk display type,
 
 **For everyone (no login required)**
 - 🌐 Browse **upcoming & past events**: thumbnails and full detail pages are public; you only need an account to register
+- 🔎 **Search & filters**: search by title and filter by campus, category, and price (free/paid), all driven by the URL query
 
 **For students**
 - 🔐 Email/password sign-up & login (sessions via NextAuth + bcrypt-hashed passwords)
 - 🪪 **Identity-verified accounts**: every sign-up must provide a matric number, IC, or passport so users are traceable USM students/staff (stored privately, never shown publicly)
 - ✅ Register / cancel registration for events (with capacity limits & past-event guards)
+- 🎟️ **My Tickets + QR check-in**: each registration gets a QR code; an organizer/admin scan checks the attendee in and **awards their MyCSD points automatically**
 - 💳 Simulated payment flow for ticketed events, recorded as real transactions
 - 👤 Profile page with editable details, MyCSD points, and real registration history
-- 📅 **Add to Calendar**: generates a downloadable `.ics` file for any event
-- 🔗 **Share Event**: uses the Web Share API with a clipboard fallback
+- 📅 **Add to Calendar** (`.ics`) and 🔗 **Share Event** (Web Share API + clipboard fallback)
 
-**For event organisers / admins**
-- 🛠️ Protected admin dashboard to **create, edit, and delete** events (full CRUD)
+**For organisers (self-service)**
+- 🙋 **Request organizer access** for your club/society; an admin reviews each request
+- 📨 Approved organisers **submit events** that enter a **moderation queue** and go live only after admin approval
 - 📋 Rich event form capturing everything attendees need to know:
   - Organising **school / faculty** and **USM campus** (Main / Engineering / Health)
   - **Free for all vs. ticketed**, and whether **outsiders (non-USM) are allowed**
   - **Dress code** and **cultural / etiquette notes** visitors must observe
   - A required **organiser emergency helpline**
   - **Poster upload** (JPG/PNG, max 5 MB) with client- & server-side validation
-  - A required **Organizer Agreement** checkbox before publishing
 - 💸 **Flexible payments**: use the built-in checkout, *or* provide your own **bank details, Touch 'n Go, and a payment QR code** for attendees to pay you directly (optional)
+
+**For admins**
+- 🛠️ Protected dashboard to **create, edit, and delete** events (full CRUD)
+- ✅ **Approval queues** for pending events and organizer requests (approve / reject)
+- 📊 **Analytics dashboard** (Recharts): registrations over time, popular categories, revenue by event, and key totals
 - 👮 Role-based access control: admin routes & actions are blocked for students (403)
 - 🚫 **Moderation tools**: block/unblock any user (with their verified ID visible for tracing), or ban any email address (e.g. Gmail) so it can neither sign in nor register
 - 📜 Public **User Agreement** (`/terms`): admins may delete any rule-violating event and block any user or email
+
+**Platform**
+- 🌏 **Bilingual (i18n)**: English / Bahasa Malaysia toggle, cookie-persisted and SSR-safe
+- 🖼️ **Image storage**: posters/QRs offload to **Vercel Blob** when configured, with a zero-config inline fallback otherwise
 
 ---
 
@@ -84,6 +114,10 @@ A glassmorphism UI with an animated aurora backdrop, Space Grotesk display type,
 | Validation | Zod |
 | Styling | Tailwind CSS + shadcn/ui (Radix) |
 | Animation | Framer Motion |
+| Charts | Recharts |
+| QR codes | qrcode |
+| Image storage | Vercel Blob (with inline fallback) |
+| i18n | Custom cookie-based context (EN / BM) |
 
 ---
 
@@ -97,17 +131,29 @@ pages/
   events/[id].tsx        # Event detail, PUBLIC; RSVP/calendar/share need login
   profile.tsx            # User profile + registration history
   payment.tsx            # Simulated checkout
+  tickets.tsx            # My Tickets (QR code per registration)
+  checkin/[regId].tsx    # Organizer/admin ticket check-in (awards MyCSD)
+  organizer.tsx          # Request organizer access + submit events
   terms.tsx              # Public User Agreement / rules
-  admin/index.tsx        # Admin event CRUD + user/email moderation
+  admin/index.tsx        # Event CRUD + approval queues + moderation
+  admin/analytics.tsx    # Charts: registrations, categories, revenue
   api/
     auth/[...nextauth].ts  # NextAuth handler
-    auth/register.ts       # Sign-up endpoint (rejects blocked emails)
-    events/                # Events CRUD (GET public, POST/PUT/DELETE admin)
+    auth/register.ts       # Sign-up endpoint (ID-verified, rejects bans)
+    events/                # Events CRUD (public GET approved-only; image offload)
     registrations/         # RSVP / cancel / list mine
+    checkin.ts             # Mark attended + award MyCSD points
     profile.ts             # Update profile
     payments.ts            # Record a payment
+    organizer/request.ts   # Request organizer access
     admin/users.ts         # List users, block/unblock
     admin/blocked-emails.ts# List/add/remove banned email addresses
+    admin/events.ts        # Approve / reject submitted events
+    admin/organizers.ts    # Approve / reject organizer requests
+components/
+  EventForm.tsx          # Shared create/edit event form (admin + organizer)
+  AnalyticsCharts.tsx    # Recharts charts (client-only)
+  QrImage.tsx            # Client QR-code renderer
 lib/
   prisma.ts              # PrismaClient singleton
   auth.ts                # NextAuth options (blocks banned accounts/emails)
@@ -117,6 +163,8 @@ lib/
   events.ts              # Event serialization + date formatting
   calendar.ts            # .ics generation
   constants.ts           # USM campuses & schools reference data
+  storage.ts             # Vercel Blob image storage (inline fallback)
+  i18n.tsx               # EN/BM dictionaries + language context
 prisma/
   schema.prisma          # User, BlockedEmail, Event, Registration, Payment
   seed.ts                # Demo data
@@ -124,7 +172,7 @@ scripts/
   screenshots.js         # Puppeteer README screenshot capture
 ```
 
-Pages read data directly through Prisma in `getServerSideProps` (server-rendered), while all mutations go through validated API routes guarded by `requireAuth` / `requireAdmin`.
+Pages read data directly through Prisma in `getServerSideProps` (server-rendered), while all mutations go through validated API routes guarded by `requireAuth` / `requireAdmin`. Public event APIs return only `APPROVED` events; unapproved submissions are visible solely to their organizer and admins.
 
 ---
 
@@ -183,8 +231,11 @@ It installs dependencies on first run, creates a `.env` from `.env.example` if o
 
 | Role | Email | Password |
 |------|-------|----------|
-| Student | `noormohammadsowan@student.usm.my` | `student123` |
+| Student (with tickets & history) | `noormohammadsowan@student.usm.my` | `student123` |
+| Approved organizer | `limwei@student.usm.my` | `organizer123` |
 | Admin | `admin@usm.my` | `admin123` |
+
+The seed also creates a student with a **pending organizer request** and an organizer-submitted **event awaiting approval**, so the admin approval queues have content to review.
 
 ---
 

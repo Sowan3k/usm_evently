@@ -1,8 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/api-auth";
+import { requireAuth } from "@/lib/api-auth";
 import { eventSchema } from "@/lib/validations";
 import { serializeEvent } from "@/lib/events";
+import { storeImage } from "@/lib/storage";
+
+// Allow larger bodies so a base64 poster/QR (up to ~5 MB) can be uploaded.
+export const config = {
+  api: { bodyParser: { sizeLimit: "8mb" } },
+};
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,15 +18,16 @@ export default async function handler(
     const { type } = req.query;
     const now = new Date();
 
-    const where =
+    const dateWhere =
       type === "upcoming"
         ? { date: { gte: now } }
         : type === "past"
           ? { date: { lt: now } }
           : {};
 
+    // The public API only ever returns approved events.
     const events = await prisma.event.findMany({
-      where,
+      where: { ...dateWhere, status: "APPROVED" },
       orderBy: { date: type === "past" ? "desc" : "asc" },
     });
 
@@ -28,10 +35,23 @@ export default async function handler(
   }
 
   if (req.method === "POST") {
-    const session = await requireAdmin(req, res);
+    const session = await requireAuth(req, res);
     if (!session) return;
 
-    // The organizer must accept the User Agreement to publish an event.
+    const isAdmin = session.user.role === "ADMIN";
+    if (!isAdmin) {
+      const me = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { organizerStatus: true },
+      });
+      if (me?.organizerStatus !== "APPROVED") {
+        return res.status(403).json({
+          error: "You need approved organizer access to submit events",
+        });
+      }
+    }
+
+    // The organizer must accept the User Agreement to submit an event.
     if (req.body?.agreedToTerms !== true) {
       return res.status(400).json({
         error: "You must accept the USM Evently Organizer Agreement",
@@ -45,16 +65,25 @@ export default async function handler(
         .json({ error: parsed.error.issues[0]?.message ?? "Invalid input" });
     }
 
-    const { date, capacity, ...rest } = parsed.data;
+    const { date, capacity, posterUrl, paymentQrUrl, ...rest } = parsed.data;
     const event = await prisma.event.create({
       data: {
         ...rest,
+        posterUrl: await storeImage(posterUrl, "poster"),
+        paymentQrUrl: await storeImage(paymentQrUrl, "qr"),
         date: new Date(date),
         capacity: capacity ?? null,
+        // Admin-created events go live immediately; organizer submissions
+        // wait in the moderation queue.
+        status: isAdmin ? "APPROVED" : "PENDING",
+        submittedById: isAdmin ? null : session.user.id,
       },
     });
 
-    return res.status(201).json({ event: serializeEvent(event) });
+    return res.status(201).json({
+      event: serializeEvent(event),
+      pendingReview: !isAdmin,
+    });
   }
 
   res.setHeader("Allow", ["GET", "POST"]);

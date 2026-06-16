@@ -3,6 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { requireAdmin } from "@/lib/api-auth";
 import { eventSchema } from "@/lib/validations";
 import { serializeEvent } from "@/lib/events";
+import { storeImage } from "@/lib/storage";
+
+export const config = {
+  api: { bodyParser: { sizeLimit: "8mb" } },
+};
 
 export default async function handler(
   req: NextApiRequest,
@@ -29,11 +34,17 @@ export default async function handler(
         .json({ error: parsed.error.issues[0]?.message ?? "Invalid input" });
     }
 
-    const { date, capacity, ...rest } = parsed.data;
+    const { date, capacity, posterUrl, paymentQrUrl, ...rest } = parsed.data;
     try {
       const event = await prisma.event.update({
         where: { id },
-        data: { ...rest, date: new Date(date), capacity: capacity ?? null },
+        data: {
+          ...rest,
+          posterUrl: await storeImage(posterUrl, "poster"),
+          paymentQrUrl: await storeImage(paymentQrUrl, "qr"),
+          date: new Date(date),
+          capacity: capacity ?? null,
+        },
       });
       return res.status(200).json({ event: serializeEvent(event) });
     } catch {

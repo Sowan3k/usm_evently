@@ -35,6 +35,16 @@ export const getServerSideProps: GetServerSideProps<EventDetailProps> = async (
     return { notFound: true };
   }
 
+  // Unapproved events are visible only to an admin or the organizer who
+  // submitted them, never to the public.
+  if (event.status !== "APPROVED") {
+    const canView =
+      session &&
+      (session.user.role === "ADMIN" ||
+        event.submittedById === session.user.id);
+    if (!canView) return { notFound: true };
+  }
+
   const registration = session
     ? await prisma.registration.findUnique({
         where: { userId_eventId: { userId: session.user.id, eventId: id } },

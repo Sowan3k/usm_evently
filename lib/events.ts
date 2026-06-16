@@ -28,6 +28,7 @@ export type SerializedEvent = {
   tngNumber: string | null;
   paymentInstructions: string | null;
   paymentQrUrl: string | null;
+  status: string;
   isPast: boolean;
 };
 
@@ -64,6 +65,7 @@ export function serializeEvent(event: Event): SerializedEvent {
     tngNumber: event.tngNumber,
     paymentInstructions: event.paymentInstructions,
     paymentQrUrl: event.paymentQrUrl,
+    status: event.status,
     isPast: event.date.getTime() < Date.now(),
   };
 }
