@@ -4,6 +4,8 @@ A full-stack campus events platform for **Universiti Sains Malaysia (USM)** stud
 
 Built with **Next.js (Pages Router) + TypeScript**, a **PostgreSQL** database via **Prisma**, and authentication with **NextAuth**.
 
+**Live demo:** [usm-evently.vercel.app](https://usm-evently.vercel.app). Sign in with any of the [demo accounts](#demo-accounts-from-the-seed). The demo database is shared, so other visitors may have changed the data.
+
 > 📣 **Looking for collaborators!** This is an open student project for the USM community. See [Contributing](#contributing) below; beginners welcome.
 
 ---
@@ -254,11 +256,29 @@ The seed also creates a student with a **pending organizer request** and an orga
 
 ## Deploying to Vercel
 
-1. Push this repo to GitHub and import it into [Vercel](https://vercel.com/new).
-2. Create a PostgreSQL database (Neon / Supabase / Vercel Postgres) and copy its connection string.
-3. In the Vercel project settings, add the environment variables: `DATABASE_URL`, `NEXTAUTH_SECRET`, and `NEXTAUTH_URL` (your production URL).
-4. Set the **Build Command** to `npm run vercel-build` (runs `prisma migrate deploy` before building).
-5. Deploy. After the first deploy, run `npm run db:seed` once against the production database if you want demo data.
+The live demo runs on Vercel with a free Neon Postgres database in the same region (Washington, D.C., `iad1`).
+
+1. Import the repo into [Vercel](https://vercel.com/new).
+2. In the project's **Storage** tab, create a Neon database and connect it with the prefix `DATABASE`. Vercel then adds `DATABASE_URL` (pooled) and `DATABASE_URL_UNPOOLED` (direct) to the project.
+3. Add `NEXTAUTH_SECRET` under **Settings → Environment Variables**. Generate it with `openssl rand -base64 32`. `NEXTAUTH_URL` is optional on Vercel, because NextAuth reads the host from the request there.
+4. Set the **Build Command** to:
+
+   ```bash
+   prisma generate && DATABASE_URL=$DATABASE_URL_UNPOOLED prisma migrate deploy && next build
+   ```
+
+   Migrations run over the direct connection, as Neon recommends. The app itself uses the pooled `DATABASE_URL` at runtime.
+5. Deploy.
+
+To load demo data, run the seed once against the direct connection:
+
+```bash
+DATABASE_URL="<DATABASE_URL_UNPOOLED value>" npm run db:seed
+```
+
+The seed deletes all events before it inserts the demo set. Never add it to the build command, or every deploy wipes real data.
+
+Image uploads go to Vercel Blob when `BLOB_READ_WRITE_TOKEN` is set. Without it, posters stay in the database as data URLs.
 
 ---
 
@@ -273,12 +293,10 @@ Contributions from the USM community (and anyone else) are very welcome; this is
 5. Commit, push to your fork, and open a **Pull Request** describing what you changed.
 
 **Good first issues / ideas:**
-- Replace the data-URL poster storage with object storage (e.g. Vercel Blob / S3)
 - Real email verification on sign-up
-- Event search & category filters on the home page
-- A "my registrations" / ticket QR page
 - Map embed on the event detail page
 - Unit/integration tests
+- A real payment provider in place of the simulated checkout
 
 Not sure where to start? Open an issue and say hi. 🙂
 
@@ -288,4 +306,4 @@ Not sure where to start? Open an issue and say hi. 🙂
 
 - The payment flow is a **simulation**: no real card is charged and raw card numbers are never stored. The payment record (amount, description, event) is persisted to demonstrate the data model. Swapping in a real provider (e.g. Stripe) would only touch `pages/payment.tsx` and `pages/api/payments.ts`.
 - MyCSD points reflect USM's Co-curriculum & Soft-skill Development scheme; events carry point values that could be awarded on attendance.
-- Event **posters** are validated (JPG/PNG, ≤ 5 MB) and currently stored as base64 data URLs in the database to keep setup zero-config. For production scale, swap this for object storage (Vercel Blob / S3), a great [first contribution](#contributing).
+- Event **posters** are validated (JPG/PNG, ≤ 5 MB). With `BLOB_READ_WRITE_TOKEN` set they upload to Vercel Blob. Without it they stay in the database as base64 data URLs, so local setup needs no extra configuration.
