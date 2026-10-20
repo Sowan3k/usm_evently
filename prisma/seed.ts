@@ -27,13 +27,13 @@ async function main() {
 
   const admin = await prisma.user.upsert({
     where: { email: "admin@usm.my" },
-    update: {},
+    update: { phone: "+60 4-000 0001" },
     create: {
       name: "USM Admin",
       email: "admin@usm.my",
       passwordHash: adminPassword,
       role: "ADMIN",
-      phone: "+60 4-653 3888",
+      phone: "+60 4-000 0001",
       identityType: "IC",
       identityNumber: "850204-07-5231",
     },
@@ -71,9 +71,9 @@ async function main() {
         dressCode: "Smart casual; covered shoes required",
         culturalNotes:
           "Modest attire is appreciated. Please switch phones to silent during briefings.",
-        emergencyContact: "+60 4-653 5000",
+        emergencyContact: "+60 4-000 0002",
         description:
-          "Welcome to USM! Join the official orientation programme to meet faculty, tour the campus, and connect with fellow new students. A full day of activities, ice-breakers, and essential briefings to kick-start your university journey.",
+          "Welcome to USM! Join the orientation programme to meet faculty, tour the campus, and connect with fellow new students. A full day of activities, ice-breakers, and essential briefings to kick-start your university journey.",
         startTime: "09:00 AM",
         endTime: "04:00 PM",
         location: "USM Main Hall, Penang",
@@ -92,7 +92,7 @@ async function main() {
         organizer: "USM Corporate & Sustainable Development Division",
         openToPublic: true,
         dressCode: "Casual",
-        emergencyContact: "+60 4-599 5000",
+        emergencyContact: "+60 4-000 0003",
         description:
           "Explore everything USM has to offer. Visit faculty booths, research showcases, student clubs, and sports facilities. Open to prospective students, parents, and the public.",
         date: daysFromNow(21),
@@ -116,7 +116,7 @@ async function main() {
         dressCode: "Formal / business attire",
         culturalNotes:
           "Bring printed copies of your resume. Booth queues are first-come, first-served.",
-        emergencyContact: "+60 4-653 4444",
+        emergencyContact: "+60 4-000 0004",
         description:
           "Meet top employers and recruiters from across Malaysia. Bring your resume, attend on-the-spot interviews, and join career-readiness workshops. A premium event with a registration fee that includes lunch and a workshop pass.",
         startTime: "09:00 AM",
@@ -153,10 +153,10 @@ async function main() {
         useExternalPayment: true,
         bankName: "Maybank",
         bankAccountName: "USM Tech Society",
-        bankAccountNumber: "5641 2233 4455",
+        bankAccountNumber: "0000 0000 0000",
         tngNumber: "+60 12-345 6789",
         paymentInstructions:
-          "Bank in or Touch 'n Go the RM 15 fee, then send your receipt to the organiser on WhatsApp to confirm your slot.",
+          "Sample payment details for this demo. Do not send money.",
       },
     }),
   ]);
@@ -170,7 +170,7 @@ async function main() {
         organizer: "USM Academic Management Division",
         openToPublic: true,
         dressCode: "Formal; graduation robes for graduands",
-        emergencyContact: "+60 4-653 3888",
+        emergencyContact: "+60 4-000 0001",
         description:
           "USM's annual convocation ceremony celebrating the achievements of graduating students across all faculties. A proud milestone for graduates and their families.",
         startTime: "08:00 AM",
@@ -189,7 +189,7 @@ async function main() {
         organizer: "USM Sports & Recreation Centre",
         openToPublic: false,
         dressCode: "Sports attire",
-        emergencyContact: "+60 4-653 3777",
+        emergencyContact: "+60 4-000 0005",
         description:
           "A day of friendly inter-faculty competition featuring track and field, futsal, and team games. Cheer on your faculty and earn CSD points for participation.",
         startTime: "07:00 AM",
@@ -208,7 +208,7 @@ async function main() {
         organizer: "USM School of Physics",
         openToPublic: true,
         dressCode: "Smart casual",
-        emergencyContact: "+60 4-653 3650",
+        emergencyContact: "+60 4-000 0006",
         description:
           "A showcase of student and faculty research, innovation projects, and interactive STEM demonstrations. Highlighting the best of USM's scientific community.",
         date: daysFromNow(-200),

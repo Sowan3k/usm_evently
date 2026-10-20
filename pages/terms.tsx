@@ -17,7 +17,7 @@ export default function Terms() {
               USM Evently User Agreement
             </CardTitle>
             <p className="text-sm text-gray-500 mt-1">
-              Last updated: June 2026. By creating an account, registering for
+              Last updated: October 2026. By creating an account, registering for
               events, or publishing events, you agree to the rules below.
             </p>
           </CardHeader>
@@ -27,16 +27,12 @@ export default function Terms() {
                 1. Who can use USM Evently
               </h2>
               <p>
-                USM Evently is a community platform for Universiti Sains
-                Malaysia (USM) students, staff, and approved organisers. To keep
-                the community safe and accountable, every account must register
-                with a valid identification number, namely your{" "}
-                <strong>matric number, IC, or passport</strong>. This
-                information is used solely for verification and to trace
-                fraudulent activity if necessary; it is never shown publicly.
-                Providing false identification is grounds for an immediate,
-                permanent block. You are responsible for keeping your account
-                secure and for all activity under it.
+                USM Evently is a student-built demo of a campus events platform
+                for Universiti Sains Malaysia (USM). It is not run by or
+                affiliated with USM. Sign-up asks for an identification number
+                to show how verification would work. Use a made-up value, never
+                your real <strong>matric, IC or passport number</strong>. You
+                are responsible for all activity under your account.
               </p>
             </section>
 
@@ -58,8 +54,7 @@ export default function Terms() {
               </ul>
               <p className="mt-2">
                 Organisers are responsible for the safety, lawfulness, and
-                accuracy of their events and must comply with all USM policies
-                and Malaysian law.
+                accuracy of their events and must comply with Malaysian law.
               </p>
             </section>
 
@@ -113,13 +108,10 @@ export default function Terms() {
                 6. Payments
               </h2>
               <p>
-                Ticketed events may use the built-in platform checkout (raw card
-                details are never stored) or the organiser&apos;s own payment
-                details (bank transfer, Touch &apos;n Go, or QR code). When you
-                pay an organiser directly, that transaction is strictly between
-                you and the organiser, so verify the details and keep your
-                receipt. Refunds, where applicable, are handled by the event
-                organiser.
+                All payments on this demo are simulated. The built-in checkout
+                charges no card and stores no card details. Organiser bank,
+                Touch &apos;n Go and QR details on events are sample data. Do
+                not send money to them.
               </p>
             </section>
 
@@ -128,9 +120,8 @@ export default function Terms() {
                 7. Privacy
               </h2>
               <p>
-                We store the information you provide (name, email, phone, and
-                your event registrations) to operate the platform. We do not
-                sell your personal data.
+                This demo stores what you enter in a shared database that other
+                visitors can change. Do not enter real personal details.
               </p>
             </section>
 
@@ -145,7 +136,16 @@ export default function Terms() {
             </section>
 
             <p className="text-sm text-gray-500 border-t pt-4">
-              Questions? Contact us at info@usm.my.
+              Questions? Open an issue on{" "}
+              <a
+                href="https://github.com/Sowan3k/usm_evently/issues"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-usmPurple underline"
+              >
+                GitHub
+              </a>
+              .
             </p>
           </CardContent>
         </Card>

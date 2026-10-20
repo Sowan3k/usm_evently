@@ -98,7 +98,7 @@ export default function Register() {
               <p className="mt-2 mb-7 text-sm text-white/60">
                 {mode === "login"
                   ? "Sign in to continue"
-                  : "Create your USM account"}
+                  : "Create your USM Evently account"}
               </p>
 
               <form
@@ -138,8 +138,8 @@ export default function Register() {
                       />
                     </div>
                     <p className="-mt-1 px-1 text-xs text-white/40">
-                      USM students &amp; staff only. Your ID is used for
-                      verification and is never shown publicly.
+                      Demo sign-up. Use a made-up ID, never your real
+                      matric, IC or passport number.
                     </p>
                   </>
                 )}

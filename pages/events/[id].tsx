@@ -262,7 +262,8 @@ export default function EventDetails({
                   </p>
                   <p className="text-xs text-gray-600 mb-2">
                     This event uses the organiser&apos;s own payment method
-                    instead of platform checkout.
+                    instead of platform checkout. These details are samples
+                    on a demo. Do not send money.
                   </p>
                   <ul className="text-sm text-gray-700 space-y-1">
                     {event.bankName && (

@@ -170,6 +170,10 @@ export default function Payment() {
               </div>
             </div>
 
+            <p className="text-xs text-gray-500">
+              Do not enter real card details. Any 12 or more digits work.
+            </p>
+
             {error && <p className="text-sm text-red-600">{error}</p>}
           </CardContent>
 
@@ -179,7 +183,7 @@ export default function Payment() {
               disabled={submitting}
               className="w-full bg-gradient-to-r from-usmPurple to-gold text-white hover:from-purple-600 hover:to-yellow-500"
             >
-              {submitting ? "Processing..." : "Submit Payment"}
+              {submitting ? "Processing..." : "Submit simulated payment"}
             </Button>
           </div>
         </Card>
@@ -188,8 +192,9 @@ export default function Payment() {
       <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
         <DialogContent className="bg-white rounded-lg shadow-xl p-6 max-w-md mx-auto text-center">
           <h2 className="text-2xl font-bold text-usmPurple mb-4">
-            Payment Successful!
+            Simulated payment recorded
           </h2>
+          <p className="text-gray-600 mb-2">No money was taken.</p>
           <p className="text-gray-600">Payment Details:</p>
           <p className="text-gray-600">
             <strong>Description:</strong> {paymentDetails.description || "N/A"}
