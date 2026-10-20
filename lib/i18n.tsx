@@ -24,7 +24,7 @@ const dict: Record<Lang, Record<string, string>> = {
     logout: "Log out",
     login: "Log in / Sign up",
     // hero
-    heroBadge: "Live campus events at Universiti Sains Malaysia",
+    heroBadge: "A student-built campus events demo for Universiti Sains Malaysia",
     heroTitlePre: "Discover what's",
     heroTitleHi: "happening",
     heroTitlePost: "at USM",
@@ -62,7 +62,7 @@ const dict: Record<Lang, Record<string, string>> = {
     myTickets: "Tiket Saya",
     logout: "Log keluar",
     login: "Log masuk / Daftar",
-    heroBadge: "Acara kampus secara langsung di Universiti Sains Malaysia",
+    heroBadge: "Demo acara kampus binaan pelajar untuk Universiti Sains Malaysia",
     heroTitlePre: "Terokai apa yang",
     heroTitleHi: "berlaku",
     heroTitlePost: "di USM",

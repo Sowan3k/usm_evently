@@ -12,6 +12,13 @@ function daysFromNow(days: number): Date {
   return d;
 }
 
+// A title that names a year takes it from the event's own date, so the two
+// always agree whenever the seed runs.
+function dated(name: string, days: number): { title: string; date: Date } {
+  const date = daysFromNow(days);
+  return { title: `${name} ${date.getFullYear()}`, date };
+}
+
 async function main() {
   console.log("Seeding database...");
 
@@ -32,15 +39,18 @@ async function main() {
     },
   });
 
+  // The demo credentials are public, so the student's phone is a sample
+  // number, and a reseed replaces any real one stored earlier.
+  const studentPhone = "+60 12-000 0000";
   const student = await prisma.user.upsert({
     where: { email: "noormohammadsowan@student.usm.my" },
-    update: {},
+    update: { phone: studentPhone },
     create: {
       name: "Noor Mohammad Sowan",
       email: "noormohammadsowan@student.usm.my",
       passwordHash: studentPassword,
       role: "STUDENT",
-      phone: "+60145202958",
+      phone: studentPhone,
       myCSDPoints: 168,
       identityType: "MATRIC",
       identityNumber: "164213",
@@ -53,7 +63,7 @@ async function main() {
   const upcoming = await Promise.all([
     prisma.event.create({
       data: {
-        title: "Orientation 2026",
+        ...dated("Orientation", 14),
         campus: "Main Campus (Minden, Penang)",
         school: "Other / Inter-school",
         organizer: "USM Student Affairs & Development Division",
@@ -64,7 +74,6 @@ async function main() {
         emergencyContact: "+60 4-653 5000",
         description:
           "Welcome to USM! Join the official orientation programme to meet faculty, tour the campus, and connect with fellow new students. A full day of activities, ice-breakers, and essential briefings to kick-start your university journey.",
-        date: daysFromNow(14),
         startTime: "09:00 AM",
         endTime: "04:00 PM",
         location: "USM Main Hall, Penang",
@@ -99,7 +108,7 @@ async function main() {
     }),
     prisma.event.create({
       data: {
-        title: "Career Fair 2026",
+        ...dated("Career Fair", 35),
         campus: "Main Campus (Minden, Penang)",
         school: "School of Management",
         organizer: "USM Career & Counselling Unit",
@@ -110,7 +119,6 @@ async function main() {
         emergencyContact: "+60 4-653 4444",
         description:
           "Meet top employers and recruiters from across Malaysia. Bring your resume, attend on-the-spot interviews, and join career-readiness workshops. A premium event with a registration fee that includes lunch and a workshop pass.",
-        date: daysFromNow(35),
         startTime: "09:00 AM",
         endTime: "06:00 PM",
         location: "Dewan Tuanku Syed Putra, USM",
@@ -156,7 +164,7 @@ async function main() {
   const past = await Promise.all([
     prisma.event.create({
       data: {
-        title: "Convocation 2022",
+        ...dated("Convocation", -540),
         campus: "Main Campus (Minden, Penang)",
         school: "Other / Inter-school",
         organizer: "USM Academic Management Division",
@@ -165,7 +173,6 @@ async function main() {
         emergencyContact: "+60 4-653 3888",
         description:
           "USM's annual convocation ceremony celebrating the achievements of graduating students across all faculties. A proud milestone for graduates and their families.",
-        date: daysFromNow(-540),
         startTime: "08:00 AM",
         endTime: "01:00 PM",
         location: "Dewan Tuanku Syed Putra, USM",
@@ -176,7 +183,7 @@ async function main() {
     }),
     prisma.event.create({
       data: {
-        title: "Sports Day 2023",
+        ...dated("Sports Day", -380),
         campus: "Main Campus (Minden, Penang)",
         school: "Other / Inter-school",
         organizer: "USM Sports & Recreation Centre",
@@ -185,7 +192,6 @@ async function main() {
         emergencyContact: "+60 4-653 3777",
         description:
           "A day of friendly inter-faculty competition featuring track and field, futsal, and team games. Cheer on your faculty and earn CSD points for participation.",
-        date: daysFromNow(-380),
         startTime: "07:00 AM",
         endTime: "05:00 PM",
         location: "USM Sports Complex",
@@ -306,7 +312,7 @@ async function main() {
       userId: student.id,
       eventId: upcoming[2].id, // Career Fair (RM 25)
       amount: 25,
-      description: "Career Fair 2026 Ticket",
+      description: `${upcoming[2].title} Ticket`,
       status: "COMPLETED",
       createdAt: daysFromNow(-4),
     },
@@ -316,7 +322,7 @@ async function main() {
       userId: organizer.id,
       eventId: upcoming[2].id,
       amount: 25,
-      description: "Career Fair 2026 Ticket",
+      description: `${upcoming[2].title} Ticket`,
       status: "COMPLETED",
       createdAt: daysFromNow(-30),
     },

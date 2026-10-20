@@ -92,7 +92,6 @@ export default function Register() {
             className="w-full max-w-md rounded-3xl glass-strong border border-white/10 p-8 shadow-glass-lg sm:p-10"
           >
             <div className="flex flex-col items-center">
-              <img src="/usm-logo.png" alt="USM Logo" className="h-14 mb-4" />
               <h1 className="font-display text-3xl font-bold gradient-text">
                 USM Evently
               </h1>

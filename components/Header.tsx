@@ -36,13 +36,16 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 glass-strong border-b border-white/10">
+      {/* Stays on every page so the demo is never mistaken for a USM service. */}
+      <p
+        role="note"
+        className="bg-amber-100 px-4 py-1.5 text-center text-xs font-medium leading-snug text-amber-950 sm:text-sm"
+      >
+        Student project built at Universiti Sains Malaysia. Not an official USM
+        service. All events and payments are simulated.
+      </p>
       <div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6">
-        <Link href="/home" className="flex items-center gap-3 group">
-          <img
-            src="/usm-logo.png"
-            alt="USM Logo"
-            className="h-9 w-auto transition-transform duration-300 group-hover:scale-105"
-          />
+        <Link href="/home" className="flex items-center">
           <span className="font-display text-lg font-bold tracking-tight gradient-text">
             USM Evently
           </span>

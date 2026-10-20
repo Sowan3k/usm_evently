@@ -24,12 +24,9 @@ export default function Footer() {
     <footer className="glass-strong border-t border-white/10 text-white/80">
       <div className="container mx-auto flex flex-col gap-6 px-6 py-8 md:flex-row md:items-center md:justify-between">
         {/* Brand */}
-        <div className="flex items-center gap-3">
-          <img src="/usm-logo.png" alt="USM Logo" className="h-8 w-auto" />
-          <div>
-            <p className="font-display font-bold gradient-text">USM Evently</p>
-            <p className="text-xs text-white/50">Connecting events at USM</p>
-          </div>
+        <div>
+          <p className="font-display font-bold gradient-text">USM Evently</p>
+          <p className="text-xs text-white/50">Connecting events at USM</p>
         </div>
 
         {/* Navigation */}
@@ -58,9 +55,24 @@ export default function Footer() {
           </Link>
         </div>
 
-        {/* Contact */}
-        <p className="text-xs text-white/50">
-          info@usm.my · +60 14 520 2958
+        {/* Credit */}
+        <p className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-white/60">
+          <a
+            href="https://sowan-portfolio.vercel.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-brand-cyan"
+          >
+            Built by Noor Mohammad Sowan
+          </a>
+          <a
+            href="https://github.com/Sowan3k/usm_evently"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="transition-colors hover:text-brand-cyan"
+          >
+            Source on GitHub
+          </a>
         </p>
       </div>
     </footer>
