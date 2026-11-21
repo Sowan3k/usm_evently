@@ -6,7 +6,7 @@ export const registerSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters").max(100),
   // Every account must be a verifiable USM student or staff member.
   identityType: z.enum(["MATRIC", "IC", "PASSPORT"], {
-    errorMap: () => ({ message: "Please choose an ID type" }),
+    error: "Please choose an ID type",
   }),
   identityNumber: z
     .string()
